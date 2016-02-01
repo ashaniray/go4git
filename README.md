@@ -1,5 +1,5 @@
 # go4git
-Git library in pure GO
+Git library in pure GO (Under construction)
 
 ## Using the tools
 ### unzlib
