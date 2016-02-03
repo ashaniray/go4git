@@ -4,6 +4,7 @@ import (
 	"compress/zlib"
 	"io"
 	"os"
+	"errors"
 )
 
 func getArgInputFile() (*os.File, error) {
@@ -13,6 +14,10 @@ func getArgInputFile() (*os.File, error) {
 	} else {
 		return os.Stdin, nil
 	}
+}
+
+func genSHA1(in *os.File, out *os.File) error {
+	return errors.New("To be implemented")
 }
 
 func unzlib(in *os.File, out *os.File) error {
