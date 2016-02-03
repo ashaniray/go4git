@@ -2,10 +2,10 @@
 
 all: unzlib gensha1
 
-unzlib: unzlib.go
+unzlib: unzlib.go utils.go
 	go build unzlib.go utils.go
 
-gensha1: gensha1.go
+gensha1: gensha1.go utils.go
 	go build gensha1.go utils.go
 
 install: unzlib

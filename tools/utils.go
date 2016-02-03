@@ -5,6 +5,8 @@ import (
 	"crypto/sha1"
 	"io"
 	"os"
+	"bytes"
+	"fmt"
 )
 
 func getArgInputFile() (*os.File, error) {
@@ -17,11 +19,17 @@ func getArgInputFile() (*os.File, error) {
 }
 
 func genSHA1(in *os.File) ([]byte, error) {
-	h := sha1.New()
-	_, err := io.Copy(h, in)
+	buf := new(bytes.Buffer)
+	length, err := buf.ReadFrom(in)
 	if err != nil {
 		return nil, err
 	}
+	prefix := fmt.Sprintf("blob %d", length)
+
+	h := sha1.New()
+	io.WriteString(h, prefix)
+	h.Write([]byte{0})
+	buf.WriteTo(h)
 	return h.Sum(nil), nil
 }
 
