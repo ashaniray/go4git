@@ -38,7 +38,7 @@ unzlib <filename>
 
 ## TODO
 - New utility **gensha1** to generate hash of content (optional filename as arg, if no arg then read from stdin). 
-  - Usage: ```gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')```. 
+  - Usage: ```gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')```
   - Compare with ```echo 'test content' | git hash-object --stdin```
   - Compare with ```echo -e 'blob 14\0Hello, World!' | shasum```
 - New utility **ls-tree** to list the contents of a tree
