@@ -37,7 +37,7 @@ unzlib <filename>
 ```
 
 ## TODO
-- New utility **gen-sha1** to generate hash of content (optional filename as arg, if no arg then read from stdin)
+- New utility **gensha1** to generate hash of content (optional filename as arg, if no arg then read from stdin). Usage: ```gensha1 <filename> | hexdump -ve '1/1 "%.2x"'```
 - New utility **ls-tree** to list the contents of a tree
 - New utility **expand-tree** to expand tree util
 - New utility **obj2file** to convert object (hash) has to file path. Example usage: cat `obj2file <hash>` | unzlib
