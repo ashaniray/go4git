@@ -2,9 +2,9 @@ package main
 
 import (
 	"compress/zlib"
+	"crypto/sha1"
 	"io"
 	"os"
-	"errors"
 )
 
 func getArgInputFile() (*os.File, error) {
@@ -16,8 +16,13 @@ func getArgInputFile() (*os.File, error) {
 	}
 }
 
-func genSHA1(in *os.File, out *os.File) error {
-	return errors.New("To be implemented")
+func genSHA1(in *os.File) ([]byte, error) {
+	h := sha1.New()
+	_, err := io.Copy(h, in)
+	if err != nil {
+		return nil, err
+	}
+	return h.Sum(nil), nil
 }
 
 func unzlib(in *os.File, out *os.File) error {

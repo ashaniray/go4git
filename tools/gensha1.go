@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"fmt"
 )
 
 func main() {
@@ -9,9 +10,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = genSHA1(f, os.Stdout)
+	b, err := genSHA1(f)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Fprintf(os.Stdout, "%s", b)
 }
 
