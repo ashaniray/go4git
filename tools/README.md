@@ -36,12 +36,28 @@ OR
 unzlib <filename>
 ```
 
+### gensha1 
+Generates hash of **blob** 
+
+#### Usage
+
+```
+$ gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')
+```
+
+Compare with 
+```
+$ echo 'test content' | git hash-object --stdin
+
+$ echo 'test content' | gensha1 | echo $(hexdump -ve '1/1 "%.2x"')
+
+$ echo -e 'blob 14\0Hello, World!' | shasum
+
+```
+
+
+
 ## TODO
-- New utility **gensha1** to generate hash of content (optional filename as arg, if no arg then read from stdin). 
-  - Usage: ```gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')```
-  - Compare with ```echo 'test content' | git hash-object --stdin```
-  - Compare with  ```echo 'test content' | gensha1 | echo $(hexdump -ve '1/1 "%.2x"')```
-  - Compare with ```echo -e 'blob 14\0Hello, World!' | shasum```
 - New utility **ls-tree** to list the contents of a tree
 - New utility **expand-tree** to expand tree util
 - New utility **obj2file** to convert object (hash) has to file path. Example usage: cat `obj2file <hash>` | unzlib
