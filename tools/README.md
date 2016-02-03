@@ -1,5 +1,5 @@
 # TOOLS
-- Each tool will have a main(). Build with ```go build <your_tool>.go util.go```. This will produce ```<your_tool>``` binary 
+- Each tool will have a main(). Build with ```go build <your_tool>.go utils.go```. This will produce ```<your_tool>``` binary 
 - The main will ofen take an argument filename to read from. If not specified it will read from stdin. Like **sort**, **cat**, etc. Call ```getArgInputFile()``` method in utils.go to obtail the File* for this purpose
 - Place your methods in ```utils.go``` and call the method from main.
 - The main will only prcoess the command line and call another function with proper arguments - so that the function 
