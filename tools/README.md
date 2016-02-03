@@ -59,6 +59,5 @@ $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ## TODO
 - New utility **ls-tree** to list the contents of a tree
-- New utility **expand-tree** to expand tree util
 - New utility **obj2file** to convert object (hash) has to file path. Example usage: cat `obj2file <hash>` | unzlib
-- New utility **init-tree** to convert a tree into a .git structure with hashes etc. Like git init.
+- New utility **tree2fs** to convert a tree into a folder structure in the file-system.
