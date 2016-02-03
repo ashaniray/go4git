@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"flag"
 	"path/filepath"
+	"errors"
 )
 
 func fileExists(path string) bool {
@@ -35,26 +36,42 @@ func IsBareRepo(root string) bool {
 	return folderExists(objFolder) && fileExists(headFile)
 }
 
+func GitDir(root string) (string, error) {
+	switch {
+	case IsRepo(*repoRoot):
+		return filepath.Join(root, ".git"), nil
+	case IsBareRepo(*repoRoot):
+		return root, nil
+	default:
+		return "", errors.New("not a git repository")
+	}
+}
+
+func GetObjPath(sha string, root string) (string, error) {
+	gd, err := GitDir(root)
+
+	if err != nil {
+		return "", err
+	}
+
+	d := sha[0:2]
+	f := sha[2:]
+	return filepath.Join(gd, d, f), nil
+}
+
 
 var repoRoot = flag.String("d", ".", "path to repository root")
 
 func main() {
 	flag.Parse()
 
-	// dir, _ := os.Getwd()
+	for _, sha := range os.Args[1:] {
+		p, err := GetObjPath(sha, *repoRoot)
 
-	switch {
-	case IsRepo(*repoRoot):
-		fmt.Println("repo")
-	case IsBareRepo(*repoRoot):
-		fmt.Println("bare repo")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "ERROR:", err)
+		} else {
+			fmt.Fprintln(os.Stdout, p)
+		}
 	}
-	// is it a normal repo
-	// os.IsExists(dir + 
-
-	// or a bare repo 
-
-	// or not a repo at all
-
-	
 }
