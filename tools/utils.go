@@ -50,7 +50,7 @@ func unzlib(in *os.File, out *os.File) error {
 
 // readType is to be called by other read object functions
 // So arg is buffer instead of file
-func readType(buf *bytes.Buffer) (string, int, error) {
+func readTypeFromBuffer(buf *bytes.Buffer) (string, int, error) {
 	//Read the type
 	objType, err := buf.ReadString(' ')
 	if err != nil {
@@ -67,6 +67,15 @@ func readType(buf *bytes.Buffer) (string, int, error) {
 	return objType[:len(objType)-1], l, err
 }
 
+func readType(in *os.File) (string, int, error) {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(in)
+	if err != nil {
+		return "", 0, err
+	}
+	return readTypeFromBuffer(buf)
+}
+
 func readTree(in *os.File) (Tree, error) {
 
 	buf := new(bytes.Buffer)
@@ -75,7 +84,7 @@ func readTree(in *os.File) (Tree, error) {
 		return Tree{}, err
 	}
 	
-	_, _, err = readType(buf)
+	_, _, err = readTypeFromBuffer(buf)
 	if err != nil {
 		return Tree{}, err
 	}
