@@ -55,6 +55,30 @@ $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ```
 
+### lstree
+Lists the details of a tree object
+
+#### Usage
+```
+$ cat <filename> | unzlib | lstree
+```
+Compare with:
+```
+$ git cat-file -p <hash_of_a_tree>
+```
+
+### lstype
+Lists the type object
+
+#### Usage
+```
+$ cat <filename> | unzlib | lstype
+```
+Compare with:
+```
+$ git cat-file -t <hash_of_object>
+```
+
 ---
 ### obj2file
 Converts a loose object (hash) to file path.
@@ -66,6 +90,5 @@ $ cat `obj2file <hash>`  |unzlib
 
 
 ## TODO
-- New utility **ls-tree** to list the contents of a tree
 
 - New utility **tree2fs** to convert a tree into a folder structure in the file-system.
