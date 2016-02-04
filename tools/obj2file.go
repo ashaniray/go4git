@@ -54,9 +54,7 @@ func GetObjPath(sha string, root string) (string, error) {
 		return "", err
 	}
 
-	d := sha[0:2]
-	f := sha[2:]
-	return filepath.Join(gd, d, f), nil
+	return filepath.Join(gd,"objects", sha[0:2], sha[2:]), nil
 }
 
 
@@ -65,13 +63,17 @@ var repoRoot = flag.String("d", ".", "path to repository root")
 func main() {
 	flag.Parse()
 
-	for _, sha := range os.Args[1:] {
-		p, err := GetObjPath(sha, *repoRoot)
-
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "ERROR:", err)
-		} else {
-			fmt.Fprintln(os.Stdout, p)
-		}
+	if flag.NArg() != 1 {
+		fmt.Fprintln(os.Stderr, "ERROR: Invalid arguments")
+		return
 	}
+
+	p, err := GetObjPath(flag.Arg(0), *repoRoot)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ERROR:", err)
+	} else {
+		fmt.Fprintf(os.Stdout, p)
+	}
+
 }

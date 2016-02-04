@@ -6,7 +6,7 @@
   - update ```install``` target
 - The ```main``` will ofen take an argument filename to read from. If not specified it will read from stdin. Like **sort**, **cat**, etc. Call ```getArgInputFile()``` method in utils.go to obtail the File* for this purpose
 - Place your methods in ```utils.go``` and call the method from main.
-- The main will only prcoess the command line and call another function with proper arguments - so that the function 
+- The main will only prcoess the command line and call another function with proper arguments - so that the function
 can also be called from other functions. See ```unzlib.go``` as an example
 - When adding/modifying code in utils.go demarcate the section you are modifying/adding with a marker to avoid merge conflicts. All your changes should be inside the marked section. E.g.
 ```
@@ -36,8 +36,8 @@ OR
 unzlib <filename>
 ```
 
-### gensha1 
-Generates hash of **blob** 
+### gensha1
+Generates hash of **blob**
 
 #### Usage
 
@@ -45,7 +45,7 @@ Generates hash of **blob**
 $ gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')
 ```
 
-Compare with 
+Compare with
 ```
 $ echo 'test content' | git hash-object --stdin
 
@@ -55,9 +55,17 @@ $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ```
 
+---
+### obj2file
+Converts a loose object (hash) to file path.
+
+#### Usage
+```
+$ cat `obj2file <hash>`  |unzlib
+```
 
 
 ## TODO
 - New utility **ls-tree** to list the contents of a tree
-- New utility **obj2file** to convert object (hash) has to file path. Example usage: cat `obj2file <hash>` | unzlib
+
 - New utility **tree2fs** to convert a tree into a folder structure in the file-system.
