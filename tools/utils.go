@@ -7,6 +7,7 @@ import (
 	"os"
 	"bytes"
 	"fmt"
+	"strconv"
 )
 
 /////// Begin changes by Ashani ///////////////////
@@ -47,19 +48,34 @@ func unzlib(in *os.File, out *os.File) error {
 	return err
 }
 
+// readType is to be called by other read object functions
+// So arg is buffer instead of file
+func readType(buf *bytes.Buffer) (string, int, error) {
+	//Read the type
+	objType, err := buf.ReadString(' ')
+	if err != nil {
+		return "", 0, err
+	}
+
+	//Read the length of tree
+	lenAsString, err := buf.ReadString(0)
+	if err != nil {
+		return "", 0, err
+	}
+
+	l, err := strconv.Atoi(lenAsString[:len(lenAsString)-1])
+	return objType[:len(objType)-1], l, err
+}
 
 func readTree(in *os.File) (Tree, error) {
+
 	buf := new(bytes.Buffer)
 	_, err := buf.ReadFrom(in)
 	if err != nil {
 		return Tree{}, err
 	}
-
-	//Read the type
-	_, err = buf.ReadString(' ')
-
-	//Read the length of tree
-	_, err = buf.ReadString(0)
+	
+	_, _, err = readType(buf)
 	if err != nil {
 		return Tree{}, err
 	}
