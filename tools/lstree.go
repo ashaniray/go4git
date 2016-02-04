@@ -14,6 +14,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Fprintf(os.Stdout, "%v\n", tree)
+	fmt.Fprintf(os.Stdout, "%s\n", tree)
 }
 
