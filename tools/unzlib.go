@@ -5,11 +5,11 @@ import (
 )
 
 func main() {
-	f, err := getArgInputFile()
+	f, err := GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}
-	err = unzlib(f, os.Stdout)
+	err = Unzlib(f, os.Stdout)
 	if err != nil {
 		panic(err)
 	}

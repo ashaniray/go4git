@@ -6,11 +6,11 @@ import (
 )
 
 func main() {
-	f, err := getArgInputFile()
+	f, err := GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}
-	tree, err := readTree(f)
+	tree, err := ReadTree(f)
 	if err != nil {
 		panic(err)
 	}

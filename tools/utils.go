@@ -12,7 +12,7 @@ import (
 
 /////// Begin changes by Ashani ///////////////////
 
-func getArgInputFile() (*os.File, error) {
+func GetArgInputFile() (*os.File, error) {
 	args := os.Args[1:]
 	if len(args) > 0 {
 		return os.Open(args[0])
@@ -21,7 +21,7 @@ func getArgInputFile() (*os.File, error) {
 	}
 }
 
-func genSHA1(in *os.File) ([]byte, error) {
+func GenSHA1(in *os.File) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	length, err := buf.ReadFrom(in)
 	if err != nil {
@@ -38,7 +38,7 @@ func genSHA1(in *os.File) ([]byte, error) {
 
 
 
-func unzlib(in *os.File, out *os.File) error {
+func Unzlib(in *os.File, out *os.File) error {
 	r, err := zlib.NewReader(in)
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func readTypeFromBuffer(buf *bytes.Buffer) (string, int, error) {
 	return objType[:len(objType)-1], l, err
 }
 
-func readType(in *os.File) (string, int, error) {
+func ReadType(in *os.File) (string, int, error) {
 	buf := new(bytes.Buffer)
 	_, err := buf.ReadFrom(in)
 	if err != nil {
@@ -76,7 +76,7 @@ func readType(in *os.File) (string, int, error) {
 	return readTypeFromBuffer(buf)
 }
 
-func readTree(in *os.File) (Tree, error) {
+func ReadTree(in *os.File) (Tree, error) {
 
 	buf := new(bytes.Buffer)
 	_, err := buf.ReadFrom(in)

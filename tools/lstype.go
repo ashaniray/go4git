@@ -6,11 +6,11 @@ import (
 )
 
 func main() {
-	f, err := getArgInputFile()
+	f, err := GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}
-	t, _, err := readType(f)
+	t, _, err := ReadType(f)
 	if err != nil {
 		panic(err)
 	}

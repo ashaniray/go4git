@@ -6,11 +6,11 @@ import (
 )
 
 func main() {
-	f, err := getArgInputFile()
+	f, err := GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}
-	b, err := genSHA1(f)
+	b, err := GenSHA1(f)
 	if err != nil {
 		panic(err)
 	}
