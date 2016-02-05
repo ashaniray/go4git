@@ -95,7 +95,7 @@ $ cat `obj2file <hash>`  |unzlib
 
 
 ## TODO
-
+- **lslobj** lists all loose objects in a repository.
 - **tree2fs** to convert a tree into a folder structure in the file-system.
 - **lscommits** list all commits of a branch
 - **fs2tree** convert a folder structure to a tree object
