@@ -62,9 +62,11 @@ Lists the details of a tree object
 ```
 $ cat <filename> | unzlib | lstree
 ```
-Compare with:
+Compare the following:
 ```
 $ git cat-file -p <hash_of_a_tree>
+
+$ cat `obj2file <hash_of_a_tree>` |  unzlib | lstree
 ```
 
 ### lstype
@@ -74,9 +76,11 @@ Lists the type object
 ```
 $ cat <filename> | unzlib | lstype
 ```
-Compare with:
+Compare the following:
 ```
 $ git cat-file -t <hash_of_object>
+
+$ $ cat `obj2file <hash_of_object>` |  unzlib | lstype
 ```
 
 ---
