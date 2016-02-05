@@ -37,12 +37,13 @@ unzlib <filename>
 ```
 
 ### gensha1
-Generates hash of **blob**
+Generates hash of (**blob** by default)
 
 #### Usage
 
 ```
 $ gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')
+$ echo "<contents_of_commit>" | gensha1 -t commit | echo $(hexdump -ve '1/1 "%.2x"')
 ```
 
 Compare with
