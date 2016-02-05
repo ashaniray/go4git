@@ -22,13 +22,13 @@ func GetArgInputFile() (*os.File, error) {
 	}
 }
 
-func GenSHA1(in *os.File) ([]byte, error) {
+func GenSHA1(in *os.File, objType string) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	length, err := buf.ReadFrom(in)
 	if err != nil {
 		return nil, err
 	}
-	prefix := fmt.Sprintf("blob %d", length)
+	prefix := fmt.Sprintf("%s %d", objType, length)
 
 	h := sha1.New()
 	io.WriteString(h, prefix)
