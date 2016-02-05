@@ -3,9 +3,11 @@ package main
 import (
 	"os"
 	"fmt"
+	"flag"
 )
 
 func main() {
+	flag.Parse()
 	f, err := GetArgInputFile()
 	if err != nil {
 		panic(err)

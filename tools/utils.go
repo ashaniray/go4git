@@ -8,12 +8,13 @@ import (
 	"bytes"
 	"fmt"
 	"strconv"
+	"flag"
 )
 
 /////// Begin changes by Ashani ///////////////////
 
 func GetArgInputFile() (*os.File, error) {
-	args := os.Args[1:]
+	args := flag.Args()
 	if len(args) > 0 {
 		return os.Open(args[0])
 	} else {
