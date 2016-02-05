@@ -96,4 +96,9 @@ $ cat `obj2file <hash>`  |unzlib
 
 ## TODO
 
-- New utility **tree2fs** to convert a tree into a folder structure in the file-system.
+- **tree2fs** to convert a tree into a folder structure in the file-system.
+- **lscommits** list all commits of a branch
+- **fs2tree** convert a folder structure to a tree object
+- **unpack** Unpack objects from a packed archive
+- **pack** Create a packed archive of objects
+
