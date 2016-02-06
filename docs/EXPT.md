@@ -17,3 +17,12 @@ $ git commit-tree <hash> -m "Message"
 $ echo <commit_hash> > .git/refs/heads/master
 
 ```
+
+### Minimal git repository
+```
+.git/
+├── HEAD
+├── objects
+└── refs
+    └── heads
+```

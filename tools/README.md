@@ -9,6 +9,7 @@
 - The main will only prcoess the command line and call another function with proper arguments - so that the function
 can also be called from other functions. See ```unzlib.go``` as an example
 - When adding/modifying code in utils.go demarcate the section you are modifying/adding with a marker to avoid merge conflicts. All your changes should be inside the marked section. E.g.
+
 ```
 ..some code
 /////Changes by <your_name> ////
@@ -25,6 +26,7 @@ func newFoo() {
 }
 //// End of changes by <some_other_name> //
 ```
+---
 
 ### unzlib
 Decompressed a zlib compressed data.
@@ -36,6 +38,7 @@ OR
 unzlib <filename>
 ```
 
+---
 ### gensha1
 Generates hash of (**blob** by default)
 
@@ -55,6 +58,7 @@ $ echo 'test content' | gensha1 | echo $(hexdump -ve '1/1 "%.2x"')
 $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ```
+---
 
 ### lstree
 Lists the details of a tree object
@@ -69,7 +73,7 @@ $ git cat-file -p <hash_of_a_tree>
 
 $ cat `obj2file <hash_of_a_tree>` |  unzlib | lstree
 ```
-
+---
 ### lstype
 Lists the type object
 
@@ -92,7 +96,7 @@ Converts a loose object (hash) to file path.
 ```
 $ cat `obj2file <hash>`  |unzlib
 ```
-
+---
 ### lslobj
 Lists all loose objects in a repository.
 
@@ -109,4 +113,4 @@ $ lslobj -d /path/to/repo
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
-
+- **initr** Create an empty [bare] git repository
