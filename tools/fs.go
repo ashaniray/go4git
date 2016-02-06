@@ -35,11 +35,17 @@ func IsBareRepo(root string) bool {
 }
 
 func GitDir(root string) (string, error) {
+	absRoot, err := filepath.Abs(root)
+
+	if err != nil {
+		return "", err
+	}
+
 	switch {
-	case IsRepo(root):
-		return filepath.Join(root, ".git"), nil
-	case IsBareRepo(root):
-		return root, nil
+	case IsRepo(absRoot):
+		return filepath.Join(absRoot, ".git"), nil
+	case IsBareRepo(absRoot):
+		return absRoot, nil
 	default:
 		return "", errors.New("not a git repository")
 	}
