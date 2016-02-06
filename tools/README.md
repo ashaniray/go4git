@@ -37,12 +37,13 @@ unzlib <filename>
 ```
 
 ### gensha1
-Generates hash of **blob**
+Generates hash of (**blob** by default)
 
 #### Usage
 
 ```
 $ gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')
+$ echo "<contents_of_commit>" | gensha1 -t commit | echo $(hexdump -ve '1/1 "%.2x"')
 ```
 
 Compare with
@@ -94,5 +95,10 @@ $ cat `obj2file <hash>`  |unzlib
 
 
 ## TODO
+- **lslobj** lists all loose objects in a repository.
+- **tree2fs** to convert a tree into a folder structure in the file-system.
+- **lscommits** list all commits of a branch
+- **fs2tree** convert a folder structure to a tree object
+- **unpack** Unpack objects from a packed archive
+- **pack** Create a packed archive of objects
 
-- New utility **tree2fs** to convert a tree into a folder structure in the file-system.
