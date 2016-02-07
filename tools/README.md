@@ -120,7 +120,7 @@ $ initr -bare /path/to/repo
 
 ## TODO
 - **tree2fs** to convert a tree into a folder structure in the file-system.
-- **lscommits** list all commits of a branch
+- **lscommits** list all commits of the current branch
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
