@@ -26,6 +26,9 @@ lslobj: lslobj.go common_files
 initr: initr.go common_files
 	go build initr.go ${COMMON_FILES}
 
+lscommits: lscommits.go common_files
+	go build lscommits.go ${COMMON_FILES}
+
 common_files:${COMMON_FILES}
 
 install: unzlib
@@ -36,6 +39,7 @@ install: unzlib
 	cp lstype ${GOPATH}/bin
 	cp lslobj ${GOPATH}/bin
 	cp initr  ${GOPATH}/bin
+	cp lscommits  ${GOPATH}/bin
 	
 clean:
 	go clean
