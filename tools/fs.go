@@ -102,3 +102,46 @@ func AllObjects(root string) ([]string, error) {
 }
 
 
+
+func createFolders(root string) error {
+	var folders = []string{ 
+		"branches", "hooks", "info", 
+		"objects", "objects/info", "objects/pack", 
+		"refs", "refs/heads", "refs/tags", 
+	}
+
+	for _, f := range folders {
+		folderPath := filepath.Join(root, f)
+		err := os.MkdirAll(folderPath, os.ModePerm)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func CreateRepository(root string, bare bool) error {
+
+	var gitDir string
+
+	if bare {
+		gitDir = root
+	} else {
+		gitDir = filepath.Join(root, ".git")
+	}
+
+	err := createFolders(gitDir)
+
+	if err != nil {
+		return err
+	}
+
+	head := filepath.Join(gitDir, "HEAD")
+	err = ioutil.WriteFile(head, []byte("ref: refs/heads/master"), os.ModePerm)
+
+	return err
+}
+
+

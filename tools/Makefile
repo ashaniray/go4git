@@ -3,7 +3,7 @@ COMMON_FILES = \
 	objects.go \
 	fs.go
 
-all: unzlib gensha1 obj2file lstree lstype lslobj
+all: unzlib gensha1 obj2file lstree lstype lslobj initr
 
 unzlib: unzlib.go common_files
 	go build unzlib.go ${COMMON_FILES}
@@ -23,6 +23,9 @@ obj2file: obj2file.go common_files
 lslobj: lslobj.go common_files
 	go build lslobj.go ${COMMON_FILES}
 
+initr: initr.go common_files
+	go build initr.go ${COMMON_FILES}
+
 common_files:${COMMON_FILES}
 
 install: unzlib
@@ -32,6 +35,7 @@ install: unzlib
 	cp lstree ${GOPATH}/bin
 	cp lstype ${GOPATH}/bin
 	cp lslobj ${GOPATH}/bin
+	cp initr  ${GOPATH}/bin
 	
 clean:
 	go clean

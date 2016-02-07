@@ -105,7 +105,18 @@ Lists all loose objects in a repository.
 ```
 $ lslobj -d /path/to/repo
 ```
+---
 
+
+### initr
+Creates an empty [bare] git repository
+
+#### Usage
+
+```
+$ initr /path/to/repo
+$ initr -bare /path/to/repo
+```
 
 ## TODO
 - **tree2fs** to convert a tree into a folder structure in the file-system.
@@ -113,4 +124,3 @@ $ lslobj -d /path/to/repo
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
-- **initr** Create an empty [bare] git repository
