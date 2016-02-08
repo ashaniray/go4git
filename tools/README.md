@@ -143,6 +143,7 @@ $ cat `obj2file <commit-hash>` | unzlib | ppcommit
 
 
 ## TODO
+- Change ```*os.File``` to ```io.Reader``` in the function arguments in ```utils.go```
 - **tree2fs** to convert a tree into a folder structure in the file-system.
 - **lscommits** list all commits of the current branch
 - **fs2tree** convert a folder structure to a tree object
