@@ -4,6 +4,7 @@ import(
 	"fmt"
 	"os"
 	"flag"
+	"io"
 )
 
 var repoRoot = flag.String("d", ".", "path to repo")
@@ -37,5 +38,5 @@ func main() {
 		return
 	}
 
-	fmt.Fprintln(cmt)
+	fmt.Fprintln(os.Stdout, cmt)
 }
