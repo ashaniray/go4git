@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"os"
-	"bufio"
 )
 
 func main() {
@@ -12,7 +11,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = Unzlib(bufio.NewReader(f), bufio.NewWriter(os.Stdout))
+	err = Zlib(f, os.Stdout)
 	if err != nil {
 		panic(err)
 	}

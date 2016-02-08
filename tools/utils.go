@@ -37,13 +37,22 @@ func GenSHA1(in *os.File, objType string) ([]byte, error) {
 	return h.Sum(nil), nil
 }
 
-func Unzlib(in *os.File, out *os.File) error {
+func Unzlib(in io.Reader, out io.Writer) error {
 	r, err := zlib.NewReader(in)
 	if err != nil {
 		return err
 	}
 	defer r.Close()
 	_, err = io.Copy(out, r)
+	return err
+}
+
+
+func Zlib(in io.Reader, out io.Writer) error {
+	w := zlib.NewWriter(out)
+	defer w.Close()
+	_, err := io.Copy(w, in)
+
 	return err
 }
 

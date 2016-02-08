@@ -37,7 +37,19 @@ OR
 ```
 unzlib <filename>
 ```
+---
+### zlib
+zlib compress data
 
+#### Usage
+
+```
+$ cat <filename> | zlib
+```
+OR
+```
+$ zlib <filename>
+```
 ---
 ### gensha1
 Generates hash of (**blob** by default)
