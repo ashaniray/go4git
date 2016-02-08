@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"flag"
 )
 
 func main() {
@@ -18,4 +18,3 @@ func main() {
 	}
 	fmt.Fprintf(os.Stdout, "%s\n", tree)
 }
-

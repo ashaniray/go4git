@@ -1,15 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"bytes"
+	"fmt"
 )
 
 type TreeItem struct {
 	isBlob bool
-	mode string
-	name string
-	hash []byte
+	mode   string
+	name   string
+	hash   []byte
 }
 
 type Tree struct {
@@ -37,4 +37,3 @@ func (tree Tree) String() string {
 	treeAsString.WriteString("]")
 	return treeAsString.String()
 }
-

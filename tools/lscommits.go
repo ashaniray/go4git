@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"flag"
-	"path/filepath"
+	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -26,11 +26,10 @@ func getHead(gitDir string) (string, error) {
 	refPath := filepath.Join(gitDir, ref)
 
 	refSha, err := ioutil.ReadFile(refPath)
-	
+
 	if err != nil {
 		return "", err
 	}
-	
 
 	return strings.Trim(string(refSha), " \r\n"), nil
 }

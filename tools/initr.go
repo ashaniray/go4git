@@ -1,14 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"flag"
 	"path"
 )
 
 var isBare = flag.Bool("bare", false, "create a bare repository instead")
-
 
 func main() {
 	flag.Parse()
@@ -20,7 +19,7 @@ func main() {
 
 	repoRoot := flag.Arg(0)
 	err := CreateRepository(repoRoot, *isBare)
-	
+
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 	} else {

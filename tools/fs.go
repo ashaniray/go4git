@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"path/filepath"
 	"errors"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 func fileExists(path string) bool {
@@ -59,20 +59,18 @@ func GetObjPath(sha string, root string) (string, error) {
 		return "", err
 	}
 
-	return filepath.Join(gd,"objects", sha[0:2], sha[2:]), nil
+	return filepath.Join(gd, "objects", sha[0:2], sha[2:]), nil
 }
-
 
 func AllObjects(root string) ([]string, error) {
 
 	objects := make([]string, 0)
 
-	gitDir, err := GitDir(root) 
+	gitDir, err := GitDir(root)
 
 	if err != nil {
 		return objects, err
 	}
-
 
 	objDir := filepath.Join(gitDir, "objects")
 
@@ -84,14 +82,14 @@ func AllObjects(root string) ([]string, error) {
 
 	for _, e := range entries {
 		if e.IsDir() && len(e.Name()) == 2 {
-			subd := filepath.Join(objDir, e.Name()) 
-			subEntries, err := ioutil.ReadDir(subd) 
+			subd := filepath.Join(objDir, e.Name())
+			subEntries, err := ioutil.ReadDir(subd)
 			if err != nil {
 				return objects, err
 			}
 
 			for _, se := range subEntries {
-				obj := e.Name() + se.Name() 
+				obj := e.Name() + se.Name()
 				objects = append(objects, obj)
 			}
 		}
@@ -101,13 +99,11 @@ func AllObjects(root string) ([]string, error) {
 
 }
 
-
-
 func createFolders(root string) error {
-	var folders = []string{ 
-		"branches", "hooks", "info", 
-		"objects", "objects/info", "objects/pack", 
-		"refs", "refs/heads", "refs/tags", 
+	var folders = []string{
+		"branches", "hooks", "info",
+		"objects", "objects/info", "objects/pack",
+		"refs", "refs/heads", "refs/tags",
 	}
 
 	for _, f := range folders {
@@ -143,5 +139,3 @@ func CreateRepository(root string, bare bool) error {
 
 	return err
 }
-
-

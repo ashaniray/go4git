@@ -1,11 +1,10 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"flag"
+	"fmt"
+	"os"
 )
-
 
 var repoRoot = flag.String("d", ".", "path to repository root")
 

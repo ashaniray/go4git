@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"flag"
+	"fmt"
+	"os"
 )
 
 var objType = flag.String("t", "blob", "The type of object, e.g. tree, blob, commit, or tag")
@@ -20,4 +20,3 @@ func main() {
 	}
 	fmt.Fprintf(os.Stdout, "%s", b)
 }
-

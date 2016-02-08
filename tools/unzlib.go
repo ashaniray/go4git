@@ -1,8 +1,8 @@
 package main
 
 import (
-	"os"
 	"flag"
+	"os"
 )
 
 func main() {
@@ -16,4 +16,3 @@ func main() {
 		panic(err)
 	}
 }
-

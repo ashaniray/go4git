@@ -1,14 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"compress/zlib"
 	"crypto/sha1"
+	"flag"
+	"fmt"
 	"io"
 	"os"
-	"bytes"
-	"fmt"
 	"strconv"
-	"flag"
 )
 
 /////// Begin changes by Ashani ///////////////////
@@ -36,8 +36,6 @@ func GenSHA1(in *os.File, objType string) ([]byte, error) {
 	buf.WriteTo(h)
 	return h.Sum(nil), nil
 }
-
-
 
 func Unzlib(in *os.File, out *os.File) error {
 	r, err := zlib.NewReader(in)
@@ -84,7 +82,7 @@ func ReadTree(in *os.File) (Tree, error) {
 	if err != nil {
 		return Tree{}, err
 	}
-	
+
 	_, _, err = readTypeFromBuffer(buf)
 	if err != nil {
 		return Tree{}, err
@@ -113,12 +111,11 @@ func ReadTree(in *os.File) (Tree, error) {
 		//Read the 20 byte hash
 		hash := buf.Next(20)
 
-		treeItem := TreeItem{isBlob:isBlob, mode:mode, hash:hash, name:name}
+		treeItem := TreeItem{isBlob: isBlob, mode: mode, hash: hash, name: name}
 		items = append(items, treeItem)
 	}
 
-	return Tree{items:items}, nil
+	return Tree{items: items}, nil
 }
 
 ///////////////////End changes by Ashani////////////
-
