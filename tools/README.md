@@ -133,7 +133,7 @@ $ initr -bare /path/to/repo
 
 
 ### ppcommit
-Pretty print a commit object, given its sha1 hash
+Pretty print a commit object, reading the decompressed commit object from stdin or file.
 
 #### Usage
 
