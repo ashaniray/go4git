@@ -129,6 +129,18 @@ Creates an empty [bare] git repository
 $ initr /path/to/repo
 $ initr -bare /path/to/repo
 ```
+---
+
+
+### ppcommit
+Pretty print a commit object, given its sha1 hash
+
+#### Usage
+
+```
+$ cat `obj2file <commit-hash>` | unzlib | ppcommit
+```
+
 
 ## TODO
 - **tree2fs** to convert a tree into a folder structure in the file-system.
@@ -136,4 +148,3 @@ $ initr -bare /path/to/repo
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
-- **ppcommit** Pretty print a commit object, given its sha1 hash

@@ -18,21 +18,9 @@ type Commit struct {
 
 
 
-func ParseCommit(sha string, root string) (*Commit, error) {
+func ParseCommit(in io.Reader) (*Commit, error) {
 
 	commit := new(Commit)
-
-	cmtObjPath, err := GetObjPath(sha, root)
-
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = os.Open(cmtObjPath)
-
-	if err != nil {
-		return nil, err
-	}
 
 	return commit, nil
 }
@@ -40,18 +28,14 @@ func ParseCommit(sha string, root string) (*Commit, error) {
 func main() {
 	flag.Parse()
 
-	if flag.NArg() != 1 {
-		fmt.Fprintln(os.Stderr, "ERROR:", "Invalid agruments")
-		return
-	}
+	f, err := GetArgInputFile()
 
-
-	commit, err := ParseCommit(flag.Arg(0), *repoRoot)
+	cmt, err := ParseCommit(f)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "ERROR:", err) 
+		fmt.Fprintln(os.Stderr, "ERROR:", err)	
 		return
 	}
 
-	fmt.Println(commit)
+	fmt.Fprintln(cmt)
 }
