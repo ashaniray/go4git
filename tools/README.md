@@ -124,3 +124,4 @@ $ initr -bare /path/to/repo
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
+- **ppcommit** Pretty print a commit object, given its sha1 hash
