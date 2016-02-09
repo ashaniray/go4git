@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"compress/zlib"
 )
 
 
@@ -48,8 +49,8 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 	}
 
 
-	objectType := (int(headByte[0]) & 0x70) >> 4
-	size := (int(headByte[0])) & int(0x0f)
+	objectType := ObjectType((int(headByte[0]) & 0x70) >> 4)
+	objectSize := (int(headByte[0])) & int(0x0f)
 	var shiftBit uint = 4
 	for {
 		sizeByte := make([]byte, 1, 1)
@@ -58,7 +59,7 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 			return 0, 0, nil, err
 		}
 		sizeByteInInt := int(sizeByte[0])
-		size = size + ((sizeByteInInt & 0x7f) << shiftBit)
+		objectSize = objectSize + ((sizeByteInInt & 0x7f) << shiftBit)
 		shiftBit += 7
 		cont := (sizeByteInInt & 0x80) >> 7
 		if cont == 0 {
@@ -66,12 +67,33 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 		}
 	}
 
-	buff := make([]byte, size, size)
-	_, err = in.Read(buff)
-	if err != nil {
-		return 0, 0, nil, err
+	var buff []byte
+	switch (objectType) {
+		case TREE, BLOB, COMMIT:
+			buff, err = readPackedBasicObject(in, objectSize)
+		case DELTA1:
+		case DELTA2:
 	}
 
-	return ObjectType(objectType), size, buff, err
+	return objectType, objectSize, buff, err
+}
+
+func readPackedBasicObject(in io.Reader, objectSize int) ([]byte, error) {
+	buff := make([]byte, objectSize)
+	zr, err := zlib.NewReader(in)
+	if err != nil {
+		return nil, err
+	}
+	defer zr.Close()
+	n, err := zr.Read(buff)
+	if err != nil {
+		if err == io.EOF {
+			err = nil
+		} else {
+			return nil, err
+		}
+	}
+	buff = buff[:n]
+	return buff, nil
 }
 
