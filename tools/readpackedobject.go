@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	t, s, buff, err := ReadPackedDataAtOffset(*offset, f)
+	t, s, buff, err := ReadPackedObjectAtOffset(*offset, f)
 	if err != nil {
 		panic(err)
 	}

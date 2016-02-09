@@ -37,13 +37,18 @@ const (
 	DELTA2
 )
 
-func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []byte, error) {
+
+func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []byte, error) {
 	_, err := in.Seek(offset, 0)
 	if err != nil {
 		return 0, 0, nil, err
 	}
+	return ReadPackedObject(in)
+}
+
+func ReadPackedObject(in io.ReadSeeker) (ObjectType, int, []byte, error) {
 	headByte := make([]byte, 1, 1)
-	_, err = in.Read(headByte)
+	_, err := in.Read(headByte)
 	if err != nil {
 		return 0, 0, nil, err
 	}
@@ -70,7 +75,7 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 	var buff []byte
 	switch (objectType) {
 		case TREE, BLOB, COMMIT:
-			buff, err = readPackedBasicObject(in, objectSize)
+			buff, err = readPackedBasicObjectData(in, objectSize)
 		case DELTA1:
 		case DELTA2:
 	}
@@ -78,7 +83,7 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 	return objectType, objectSize, buff, err
 }
 
-func readPackedBasicObject(in io.Reader, objectSize int) ([]byte, error) {
+func readPackedBasicObjectData(in io.Reader, objectSize int) ([]byte, error) {
 	buff := make([]byte, objectSize)
 	zr, err := zlib.NewReader(in)
 	if err != nil {
