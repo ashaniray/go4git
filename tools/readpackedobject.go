@@ -15,13 +15,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	t, s, buff, err := ReadPackedObjectAtOffset(*offset, f)
+	p, err := ReadPackedObjectAtOffset(*offset, f)
 	if err != nil {
 		panic(err)
 	}
 	if *verbose {
-		fmt.Fprintf(os.Stdout, "Object at offset [%d] => Type: %s, Size: %d, Data(starts below):\n", *offset, t, s)
+		fmt.Fprintf(os.Stdout, "Object at [%d] => Type: %s, Size: %d\n", *offset, p.objectType, p.size)
+		fmt.Fprintf(os.Stdout, "  ObjRef: %s, NegativeOffset: %d\n", p.hashOfRef, p.negOffsetOfRef)
+		fmt.Fprintf(os.Stdout, "  Data(starts below):\n")
 	}
-	fmt.Fprintf(os.Stdout, "%s", buff)
+	fmt.Fprintf(os.Stdout, "%s", p.data)
 }
 
