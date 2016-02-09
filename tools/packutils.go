@@ -5,8 +5,38 @@ import (
 )
 
 
+type ObjectType int
 
-func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (int, int, []byte, error) {
+func (t ObjectType) String() string {
+	switch t {
+	case COMMIT:
+		return "commit"
+	case TREE:
+		return "tree"
+	case BLOB:
+		return "blob"
+	case TAG:
+		return "tag"
+	case DELTA1:
+		return "delta1"
+	case DELTA2:
+		return "delta2"
+	}
+	return "Unknown type"
+}
+
+const (
+	_ = iota
+	COMMIT
+	TREE
+	BLOB
+	TAG
+	_
+	DELTA1
+	DELTA2
+)
+
+func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []byte, error) {
 	_, err := in.Seek(offset, 0)
 	if err != nil {
 		return 0, 0, nil, err
@@ -45,6 +75,6 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (int, int, []byte, e
 		return 0, 0, nil, err
 	}
 
-	return objectType, size, buff, err
+	return ObjectType(objectType), size, buff, err
 }
 

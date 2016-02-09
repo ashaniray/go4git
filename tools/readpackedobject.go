@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 	if *infoOnly {
-		fmt.Fprintf(os.Stdout, "Type: %d, Size: %d\n", t, s)
+		fmt.Fprintf(os.Stdout, "Type: %s, Size: %d\n", t, s)
 	} else {
 		fmt.Fprintf(os.Stdout, "%s", buff)
 	}
