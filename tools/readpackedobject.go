@@ -7,7 +7,7 @@ import (
 )
 
 var offset = flag.Int64("s", -1, "The offset to read from the pack file")
-var infoOnly = flag.Bool("t", false, "Output verbose information")
+var verbose = flag.Bool("t", false, "Output verbose information")
 
 func main() {
 	flag.Parse()
@@ -19,10 +19,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if *infoOnly {
-		fmt.Fprintf(os.Stdout, "Type: %s, Size: %d\n", t, s)
-	} else {
-		fmt.Fprintf(os.Stdout, "%s", buff)
+	if *verbose {
+		fmt.Fprintf(os.Stdout, "Object at offset [%d] => Type: %s, Size: %d, Data(starts below):\n", *offset, t, s)
 	}
+	fmt.Fprintf(os.Stdout, "%s", buff)
 }
 
