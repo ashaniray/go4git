@@ -1,9 +1,10 @@
 COMMON_FILES = \
 	utils.go \
 	objects.go \
-	fs.go
+	fs.go \
+	packutils.go
 
-all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits
+all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits readpackedobject
 
 unzlib: unzlib.go common_files
 	go build unzlib.go ${COMMON_FILES}
@@ -13,6 +14,9 @@ zlib: zlib.go common_files
 
 gensha1: gensha1.go common_files
 	go build gensha1.go ${COMMON_FILES}
+
+readpackedobject: readpackedobject.go common_files
+	go build readpackedobject.go ${COMMON_FILES}
 
 lstree: lstree.go common_files
 	go build lstree.go ${COMMON_FILES}
@@ -41,6 +45,7 @@ install: unzlib
 	cp unzlib ${GOPATH}/bin
 	cp zlib ${GOPATH}/bin
 	cp gensha1 ${GOPATH}/bin
+	cp readpackedobject ${GOPATH}/bin
 	cp obj2file ${GOPATH}/bin
 	cp lstree ${GOPATH}/bin
 	cp lstype ${GOPATH}/bin
