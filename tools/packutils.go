@@ -49,11 +49,8 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 
 
 	objectType := (int(headByte[0]) & 0x70) >> 4
-
 	size := (int(headByte[0])) & int(0x0f)
-
 	var shiftBit uint = 4
-
 	for {
 		sizeByte := make([]byte, 1, 1)
 		_, err = in.Read(sizeByte)
@@ -61,8 +58,8 @@ func ReadPackedDataAtOffset(offset int64, in io.ReadSeeker) (ObjectType, int, []
 			return 0, 0, nil, err
 		}
 		sizeByteInInt := int(sizeByte[0])
-		size = size + (sizeByteInInt << shiftBit)
-		shiftBit += 8
+		size = size + ((sizeByteInInt & 0x7f) << shiftBit)
+		shiftBit += 7
 		cont := (sizeByteInInt & 0x80) >> 7
 		if cont == 0 {
 			break
