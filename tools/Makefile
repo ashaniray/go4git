@@ -2,6 +2,7 @@ COMMON_FILES = \
 	utils.go \
 	objects.go \
 	fs.go \
+	commit.go \
 	packutils.go
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits readpackedobject
