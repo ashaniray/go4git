@@ -1,21 +1,21 @@
 package main
 
-import(
+import (
+	"bytes"
+	"errors"
 	"fmt"
 	"io"
-	"bytes"
-	"strings"
-	"errors"
 	"strconv"
+	"strings"
 )
 
 type CommitFields map[string]string
 
 type Commit struct {
-	Tree string
-	Parent string
-	Author string
-	Committer string
+	Tree      string
+	Parent    string
+	Author    *Person
+	Committer *Person
 	Message   string
 }
 
@@ -84,17 +84,17 @@ func parseBody(buff *bytes.Buffer, size int) (CommitFields, error) {
 func (cf CommitFields) ToCommit() *Commit {
 	commit := new(Commit)
 
-	commit.Tree      = cf["tree"]
-	commit.Author    = cf["author"]
-	commit.Committer = cf["committer"]
-	commit.Message   = cf["message"]
+	commit.Tree = cf["tree"]
+	commit.Author = parsePerson(cf["author"])
+	commit.Committer = parsePerson(cf["committer"])
+	commit.Message = cf["message"]
 
-	parent, ok := cf["parent"] 
+	parent, ok := cf["parent"]
 
 	if ok {
 		commit.Parent = parent
 	}
-	return commit;
+	return commit
 }
 
 func ParseCommit(in io.Reader) (*Commit, error) {
@@ -102,7 +102,7 @@ func ParseCommit(in io.Reader) (*Commit, error) {
 	buff := new(bytes.Buffer)
 	buff.ReadFrom(in)
 
-	size, err := parseHeader(buff) 
+	size, err := parseHeader(buff)
 
 	if err != nil {
 		return nil, err
@@ -116,4 +116,3 @@ func ParseCommit(in io.Reader) (*Commit, error) {
 
 	return body.ToCommit(), nil
 }
-

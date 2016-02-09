@@ -3,7 +3,8 @@ COMMON_FILES = \
 	objects.go \
 	fs.go \
 	commit.go \
-	packutils.go
+	packutils.go \
+	person.go
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits readpackedobject
 

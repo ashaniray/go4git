@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"os"
-	"bufio"
 )
 
 func main() {

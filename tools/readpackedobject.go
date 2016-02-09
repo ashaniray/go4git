@@ -26,4 +26,3 @@ func main() {
 	}
 	fmt.Fprintf(os.Stdout, "%s", p.data)
 }
-

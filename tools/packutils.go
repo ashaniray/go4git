@@ -1,19 +1,19 @@
 package main
 
 import (
-	"io"
 	"compress/zlib"
 	"fmt"
+	"io"
 )
 
 type ObjectType int
 
 type PackedObject struct {
-	objectType ObjectType
-	data []byte
-	hashOfRef string
+	objectType     ObjectType
+	data           []byte
+	hashOfRef      string
 	negOffsetOfRef int64
-	size int
+	size           int
 }
 
 const (
@@ -45,8 +45,6 @@ func (t ObjectType) String() string {
 	return "Unknown type"
 }
 
-
-
 func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, error) {
 	_, err := in.Seek(offset, 0)
 	if err != nil {
@@ -61,7 +59,6 @@ func ReadPackedObject(in io.ReadSeeker) (PackedObject, error) {
 	if err != nil {
 		return PackedObject{}, err
 	}
-
 
 	objectType := ObjectType((int(headByte[0]) & 0x70) >> 4)
 	objectSize := (int(headByte[0])) & int(0x0f)
@@ -84,16 +81,16 @@ func ReadPackedObject(in io.ReadSeeker) (PackedObject, error) {
 	var buff []byte
 	var hashOfRef string
 	var negOffset int64
-	switch (objectType) {
-		case TREE, BLOB, COMMIT:
-			buff, err = readPackedBasicObjectData(in, objectSize)
-		case REF_DELTA:
-			buff, hashOfRef, err = readRefDeltaObjectData(in, objectSize)
-		case OFS_DELTA:
-			buff, negOffset, err = readOfsDeltaObjectData(in, objectSize)
+	switch objectType {
+	case TREE, BLOB, COMMIT:
+		buff, err = readPackedBasicObjectData(in, objectSize)
+	case REF_DELTA:
+		buff, hashOfRef, err = readRefDeltaObjectData(in, objectSize)
+	case OFS_DELTA:
+		buff, negOffset, err = readOfsDeltaObjectData(in, objectSize)
 	}
 
-	return PackedObject{objectType:objectType, size:objectSize, negOffsetOfRef:negOffset, hashOfRef:hashOfRef, data:buff}, err
+	return PackedObject{objectType: objectType, size: objectSize, negOffsetOfRef: negOffset, hashOfRef: hashOfRef, data: buff}, err
 }
 
 func readPackedBasicObjectData(in io.Reader, objectSize int) ([]byte, error) {
@@ -148,4 +145,3 @@ func readOfsDeltaObjectData(in io.Reader, objectSize int) ([]byte, int64, error)
 	buff, err := readPackedBasicObjectData(in, objectSize)
 	return buff, negativeOffset, err
 }
-

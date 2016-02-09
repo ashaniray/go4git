@@ -47,7 +47,6 @@ func Unzlib(in io.Reader, out io.Writer) error {
 	return err
 }
 
-
 func Zlib(in io.Reader, out io.Writer) error {
 	w := zlib.NewWriter(out)
 	defer w.Close()

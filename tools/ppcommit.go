@@ -1,9 +1,9 @@
 package main
 
-import(
+import (
+	"flag"
 	"fmt"
 	"os"
-	"flag"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	cmt, err := ParseCommit(f)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "ERROR:", err)	
+		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		return
 	}
 
