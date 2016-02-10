@@ -70,6 +70,30 @@ $ echo 'test content' | gensha1 | echo $(hexdump -ve '1/1 "%.2x"')
 $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ```
+
+### showindex
+Displays the contents from pack-index file for a given index or an object hash
+
+#### Usage
+```
+showindex -h 06041ea2909aadb02891e1d <index_file>
+showindex -i 3 <index_file>
+```
+If both -i and -h is provided, -h option will take precedence
+
+### readpackedobject
+Displays the packed object data for a given pack-file
+
+Typically, provide the offset provided by ```showindex``` as the argument for ```-s <offset>``` in the 
+```readpackedobject``` command. The optional ```-t=true``` prints out metadata information
+as well.
+
+#### Usage
+```
+showindex -h 06041ea2909aadb02891e1d96f2cee00ba7f7d59 <index_file>
+readpackedobject -s 590 -t=true <pack_file>
+```
+
 ---
 
 ### lstree
