@@ -13,7 +13,7 @@ type PackedObject struct {
 	data           []byte
 	hashOfRef      string
 	negOffsetOfRef int64
-	size           int
+	size           int64
 }
 
 const (
@@ -54,30 +54,21 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, err
 }
 
 func ReadPackedObject(in io.ReadSeeker) (PackedObject, error) {
+	//Read the header and size
 	headByte := make([]byte, 1)
 	_, err := in.Read(headByte)
 	if err != nil {
 		return PackedObject{}, err
 	}
-
 	objectType := ObjectType((int(headByte[0]) & 0x70) >> 4)
-	objectSize := (int(headByte[0])) & int(0x0f)
-	var shiftBit uint = 4
-	for {
-		sizeByte := make([]byte, 1)
-		_, err = in.Read(sizeByte)
-		if err != nil {
-			return PackedObject{}, err
-		}
-		sizeByteInInt := int(sizeByte[0])
-		objectSize = objectSize + ((sizeByteInInt & 0x7f) << shiftBit)
-		shiftBit += 7
-		cont := (sizeByteInInt & 0x80) >> 7
-		if cont == 0 {
-			break
-		}
+	objectSize := (int64(headByte[0])) & int64(0x0f)
+	size, err := readVariableSize(in)
+	if err != nil {
+		return PackedObject{}, err
 	}
+	objectSize = objectSize + (size << 4)
 
+	// Read the data
 	var buff []byte
 	var hashOfRef string
 	var negOffset int64
@@ -93,7 +84,27 @@ func ReadPackedObject(in io.ReadSeeker) (PackedObject, error) {
 	return PackedObject{objectType: objectType, size: objectSize, negOffsetOfRef: negOffset, hashOfRef: hashOfRef, data: buff}, err
 }
 
-func readPackedBasicObjectData(in io.Reader, objectSize int) ([]byte, error) {
+func readVariableSize(in io.Reader) (int64, error) {
+	var size int64 = 0
+	var shiftBit uint = 0
+	for {
+		sizeByte := make([]byte, 1)
+		_, err := in.Read(sizeByte)
+		if err != nil {
+			return 0, err
+		}
+		sizeByteInInt := int64(sizeByte[0])
+		size = size + ((sizeByteInInt & 0x7f) << shiftBit)
+		shiftBit += 7
+		cont := (sizeByteInInt & 0x80) >> 7
+		if cont == 0 {
+			break
+		}
+	}
+	return size, nil
+}
+
+func readPackedBasicObjectData(in io.Reader, objectSize int64) ([]byte, error) {
 	buff := make([]byte, objectSize)
 	zr, err := zlib.NewReader(in)
 	if err != nil {
@@ -107,7 +118,7 @@ func readPackedBasicObjectData(in io.Reader, objectSize int) ([]byte, error) {
 	return buff, nil
 }
 
-func readRefDeltaObjectData(in io.Reader, objectSize int) ([]byte, string, error) {
+func readRefDeltaObjectData(in io.Reader, objectSize int64) ([]byte, string, error) {
 	hashObject := make([]byte, 20)
 	n, err := in.Read(hashObject)
 	if err != nil {
@@ -119,29 +130,12 @@ func readRefDeltaObjectData(in io.Reader, objectSize int) ([]byte, string, error
 	return buff, string(hashObject[:n]), err
 }
 
-//From documentation:
-//n bytes with MSB set in all but the last one.
-//The offset is then the number constructed by
-//concatenating the lower 7 bit of each byte, and
-//for n >= 2 adding 2^7 + 2^14 + ... + 2^(7*(n-1))
-//to the result.
-func readOfsDeltaObjectData(in io.Reader, objectSize int) ([]byte, int64, error) {
-	var negativeOffset int64 = 0
-	var shiftBit uint = 0
-	for {
-		sizeByte := make([]byte, 1)
-		_, err := in.Read(sizeByte)
-		if err != nil {
-			return nil, 0, err
-		}
-		sizeByteInInt := int64(sizeByte[0])
-		negativeOffset = negativeOffset + ((sizeByteInInt & 0x7f) << shiftBit)
-		shiftBit += 7
-		cont := (sizeByteInInt & 0x80) >> 7
-		if cont == 0 {
-			break
-		}
+func readOfsDeltaObjectData(in io.Reader, objectSize int64) ([]byte, int64, error) {
+	negativeOffset, err := readVariableSize(in)
+	if err != nil {
+		return nil, 0, err
 	}
 	buff, err := readPackedBasicObjectData(in, objectSize)
 	return buff, negativeOffset, err
 }
+
