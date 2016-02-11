@@ -1,12 +1,12 @@
 # TOOLS
 - Each tool will have a main(). Build with ```go build <your_tool>.go utils.go```. This will produce ```<your_tool>``` binary
 - Update ```Makefile``` for the new tool:
-  - new target for builing of new tool. Refer to target ```unzlib``` in ```Makefile```
+  - new target for building of new tool. Refer to target ```unzlib``` in ```Makefile```
   - update ```all``` target
   - update ```install``` target
-- The ```main``` will ofen take an argument filename to read from. If not specified it will read from stdin. Like **sort**, **cat**, etc. Call ```getArgInputFile()``` method in utils.go to obtail the File* for this purpose
+- The ```main``` will often take an argument filename to read from. If not specified it will read from stdin. Like **sort**, **cat**, etc. Call ```getArgInputFile()``` method in utils.go to obtain the File* for this purpose
 - Place your methods in ```utils.go``` and call the method from main.
-- The main will only prcoess the command line and call another function with proper arguments - so that the function
+- The main will only process the command line and call another function with proper arguments - so that the function
 can also be called from other functions. See ```unzlib.go``` as an example
 - When adding/modifying code in utils.go demarcate the section you are modifying/adding with a marker to avoid merge conflicts. All your changes should be inside the marked section. E.g.
 
