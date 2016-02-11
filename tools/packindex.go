@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"strings"
 )
 
 // Only Version 2..
@@ -141,18 +142,16 @@ func GetObjectForHash(hash string, in io.ReadSeeker) (PackIndex, error) {
 		if err != nil {
 			return PackIndex{}, err
 		}
-		//switch (strings.Compare(hash, indexObj.hash[:len(hash)])) {
-		sliceHash := hashOfObj[:len(hash)]
-		if hash == sliceHash {
+		switch (strings.Compare(hash, hashOfObj[:len(hash)])) {
+		case 0:
 			return ReadPackIndexAt(curr, in)
-		}
-		if hash > sliceHash {
+		case 1:
 			if start < curr {
 				start = curr
 			} else {
 				start++
 			}
-		} else {
+		case -1:
 			if end > curr {
 				end = curr
 			} else {
