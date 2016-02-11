@@ -18,8 +18,6 @@ func main() {
 
 	repo, err := NewRepository(*repoRoot)
 
-
-
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		return
