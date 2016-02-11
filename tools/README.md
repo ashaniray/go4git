@@ -95,6 +95,10 @@ $ showindex -h 06041ea2909aadb02891e1d96f2cee00ba7f7d59 <index_file>
 Offset: 590, Hash: 06041ea2909aadb02891e1d96f2cee00ba7f7d59, crc: 98db6920
 $ readpackedobject -s 590 -t=true <pack_file>
 ```
+Or you can use the following compact form
+```
+$ readpackedobject -s $(showindex -h <hash> -o offset <idx_file>) <pack_file>
+```
 
 ---
 
