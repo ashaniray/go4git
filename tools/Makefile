@@ -1,6 +1,6 @@
 COMMON_FILES = \
 	utils.go \
-	objects.go \
+	tree.go \
 	fs.go \
 	commit.go \
 	pack.go \
