@@ -23,19 +23,19 @@ func folderExists(path string) bool {
 	}
 }
 
-func IsRepo(root string) bool {
+func isRepo(root string) bool {
 	dotGit := filepath.Join(root, ".git")
 	return folderExists(dotGit)
 }
 
-func IsBareRepo(root string) bool {
+func isBareRepo(root string) bool {
 	objFolder := filepath.Join(root, "objects")
 	headFile := filepath.Join(root, "HEAD")
 
 	return folderExists(objFolder) && fileExists(headFile)
 }
 
-func GitDir(root string) (string, error) {
+func getGitDir(root string) (string, error) {
 	absRoot, err := filepath.Abs(root)
 
 	if err != nil {
@@ -43,30 +43,20 @@ func GitDir(root string) (string, error) {
 	}
 
 	switch {
-	case IsRepo(absRoot):
+	case isRepo(absRoot):
 		return filepath.Join(absRoot, ".git"), nil
-	case IsBareRepo(absRoot):
+	case isBareRepo(absRoot):
 		return absRoot, nil
 	default:
 		return "", errors.New("not a git repository")
 	}
 }
 
-func GetObjPath(sha string, root string) (string, error) {
-	gd, err := GitDir(root)
-
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(gd, "objects", sha[0:2], sha[2:]), nil
-}
-
 func AllObjects(root string) ([]string, error) {
 
 	objects := make([]string, 0)
 
-	gitDir, err := GitDir(root)
+	gitDir, err := getGitDir(root)
 
 	if err != nil {
 		return objects, err

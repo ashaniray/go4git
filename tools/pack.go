@@ -138,4 +138,3 @@ func readOfsDeltaObjectData(in io.Reader, objectSize int64) ([]byte, int64, erro
 	buff, err := readPackedBasicObjectData(in, objectSize)
 	return buff, negativeOffset, err
 }
-

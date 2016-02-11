@@ -4,7 +4,8 @@ COMMON_FILES = \
 	fs.go \
 	commit.go \
 	pack.go \
-	person.go
+	person.go \
+	repository.go
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits readpackedobject
 
@@ -41,6 +42,9 @@ lscommits: lscommits.go common_files
 ppcommit: ppcommit.go common_files
 	go build ppcommit.go ${COMMON_FILES}
 
+repostat: repostat.go common_files
+	go build repostat.go ${COMMON_FILES}
+
 common_files:${COMMON_FILES}
 
 install: unzlib
@@ -55,6 +59,7 @@ install: unzlib
 	cp initr  ${GOPATH}/bin
 	cp lscommits  ${GOPATH}/bin
 	cp ppcommit  ${GOPATH}/bin
+	cp repostat  ${GOPATH}/bin
 	
 clean:
 	go clean

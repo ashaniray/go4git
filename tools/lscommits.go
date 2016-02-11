@@ -11,7 +11,7 @@ import (
 
 var repoRoot = flag.String("d", ".", "path to a git repo")
 
-func getHead(gitDir string) (string, error) {
+func getHeadSha(gitDir string) (string, error) {
 	head := filepath.Join(gitDir, "HEAD")
 	data, err := ioutil.ReadFile(head)
 
@@ -37,14 +37,14 @@ func getHead(gitDir string) (string, error) {
 func main() {
 	flag.Parse()
 
-	repof, err := GitDir(*repoRoot)
+	repof, err := getGitDir(*repoRoot)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		return
 	}
 
-	headSha, err := getHead(repof)
+	headSha, err := getHeadSha(repof)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)

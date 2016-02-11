@@ -16,12 +16,14 @@ func main() {
 		return
 	}
 
-	p, err := GetObjPath(flag.Arg(0), *repoRoot)
+	repo, err := NewRepository(*repoRoot)
+
+
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
-	} else {
-		fmt.Fprintf(os.Stdout, p)
+		return
 	}
-
+    
+	fmt.Fprintf(os.Stdout, repo.LooseObjPath(flag.Arg(0)))
 }
