@@ -70,8 +70,6 @@ $ echo 'test content' | gensha1 | echo $(hexdump -ve '1/1 "%.2x"')
 $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ```
-<<<<<<< HEAD
-=======
 
 ### showindex
 Displays the contents from pack-index file for a given index or an object hash
@@ -101,9 +99,6 @@ Or you can use the following compact form
 ```
 $ readpackedobject -s $(showindex -h <hash> -o offset <idx_file>) <pack_file>
 ```
-
->>>>>>> 79a404013e2279b2367cd53b6aac6c0f8b7a3320
----
 
 ### lstree
 Lists the details of a tree object
