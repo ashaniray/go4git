@@ -21,7 +21,7 @@ func main() {
 	}
 	if *verbose {
 		fmt.Fprintf(os.Stdout, "Object at [%d] => Type: %s, Size: %d\n", *offset, p.objectType, p.size)
-		fmt.Fprintf(os.Stdout, "  ObjRef: %s, NegativeOffset: %d\n", p.hashOfRef, p.negOffsetOfRef)
+		fmt.Fprintf(os.Stdout, "  ObjRef: %s, ObjOffset: %d\n", p.hashOfRef, p.refOffset)
 		fmt.Fprintf(os.Stdout, "  Data(starts below):\n")
 	}
 	fmt.Fprintf(os.Stdout, "%s", p.data)

@@ -8,6 +8,8 @@ import (
 
 var indexAt = flag.Int("i", 0, "index")
 var hash = flag.String("h", "", "Hash of object")
+var output = flag.String("o", "all", "Ouputs a specific field: "+
+	"\"hash\", \"offset\", \"crc\"")
 
 func main() {
 	flag.Parse()
@@ -21,5 +23,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Fprintf(os.Stdout, "%s\n", index)
+	switch *output {
+	case "hash":
+		fmt.Fprintf(os.Stdout, "%s\n", index.hash)
+	case "offset":
+		fmt.Fprintf(os.Stdout, "%d\n", index.offset)
+	case "crc":
+		fmt.Fprintf(os.Stdout, "%s\n", index.crc)
+	default:
+		fmt.Fprintf(os.Stdout, "%s\n", index)
+	}
 }
+

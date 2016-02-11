@@ -2,7 +2,6 @@ package main
 
 import (
 	"compress/zlib"
-	"fmt"
 	"io"
 )
 
@@ -12,7 +11,7 @@ type PackedObject struct {
 	objectType     ObjectType
 	data           []byte
 	hashOfRef      string
-	negOffsetOfRef int64
+	refOffset      int64
 	size           int64
 }
 
@@ -50,13 +49,10 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, err
 	if err != nil {
 		return PackedObject{}, err
 	}
-	return ReadPackedObject(in)
-}
 
-func ReadPackedObject(in io.ReadSeeker) (PackedObject, error) {
 	//Read the header and size
 	headByte := make([]byte, 1)
-	_, err := in.Read(headByte)
+	_, err = in.Read(headByte)
 	if err != nil {
 		return PackedObject{}, err
 	}
@@ -69,19 +65,17 @@ func ReadPackedObject(in io.ReadSeeker) (PackedObject, error) {
 	objectSize = objectSize + (size << 4)
 
 	// Read the data
-	var buff []byte
 	var hashOfRef string
 	var negOffset int64
 	switch objectType {
-	case TREE, BLOB, COMMIT:
-		buff, err = readPackedBasicObjectData(in, objectSize)
 	case REF_DELTA:
-		buff, hashOfRef, err = readRefDeltaObjectData(in, objectSize)
+		hashOfRef, err = readRefDeltaObjectData(in, objectSize)
 	case OFS_DELTA:
-		buff, negOffset, err = readOfsDeltaObjectData(in, objectSize)
+		negOffset, err = readOfsDeltaObjectData(in, objectSize)
 	}
+	buff, err := readPackedBasicObjectData(in, objectSize)
 
-	return PackedObject{objectType: objectType, size: objectSize, negOffsetOfRef: negOffset, hashOfRef: hashOfRef, data: buff}, err
+	return PackedObject{objectType: objectType, size: objectSize, refOffset: offset - negOffset, hashOfRef: hashOfRef, data: buff}, err
 }
 
 func readVariableSize(in io.Reader) (int64, error) {
@@ -104,6 +98,27 @@ func readVariableSize(in io.Reader) (int64, error) {
 	return size, nil
 }
 
+func readVariableSizeForOFS(in io.Reader) (int64, error) {
+	sizeByte := make([]byte, 1)
+	_, err := in.Read(sizeByte)
+	if err != nil {
+		return 0, err
+	}
+	c := int64(sizeByte[0])
+	size := c & 0x7f
+	for (c & 0x80) != 0  {
+		size += 1
+		_, err = in.Read(sizeByte)
+		if err != nil {
+			return 0, err
+		}
+		c = int64(sizeByte[0])
+		size = (size << 7) + (c & 0x7f)
+	}
+	return size, nil
+}
+
+
 func readPackedBasicObjectData(in io.Reader, objectSize int64) ([]byte, error) {
 	buff := make([]byte, objectSize)
 	zr, err := zlib.NewReader(in)
@@ -118,23 +133,20 @@ func readPackedBasicObjectData(in io.Reader, objectSize int64) ([]byte, error) {
 	return buff, nil
 }
 
-func readRefDeltaObjectData(in io.Reader, objectSize int64) ([]byte, string, error) {
+func readRefDeltaObjectData(in io.Reader, objectSize int64) (string, error) {
 	hashObject := make([]byte, 20)
 	n, err := in.Read(hashObject)
 	if err != nil {
-		return nil, "", err
+		return "", err
 	}
-	fmt.Printf("Read Hash: %v\n", hashObject)
-
-	buff, err := readPackedBasicObjectData(in, objectSize)
-	return buff, string(hashObject[:n]), err
+	return string(hashObject[:n]), err
 }
 
-func readOfsDeltaObjectData(in io.Reader, objectSize int64) ([]byte, int64, error) {
-	negativeOffset, err := readVariableSize(in)
+func readOfsDeltaObjectData(in io.Reader, objectSize int64) (int64, error) {
+	negativeOffset, err := readVariableSizeForOFS(in)
 	if err != nil {
-		return nil, 0, err
+		return 0, err
 	}
-	buff, err := readPackedBasicObjectData(in, objectSize)
-	return buff, negativeOffset, err
+	return negativeOffset, err
 }
+

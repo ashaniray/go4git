@@ -83,7 +83,7 @@ func ReadPackIndexAt(indexAt int, in io.ReadSeeker) (PackIndex, error) {
 	if err != nil {
 		return PackIndex{}, err
 	}
-	
+
 	hash, err := readHashAt(indexAt, in)
 	if err != nil {
 		return PackIndex{}, err
@@ -99,7 +99,7 @@ func ReadPackIndexAt(indexAt int, in io.ReadSeeker) (PackIndex, error) {
 		return PackIndex{}, err
 	}
 
-	return PackIndex {
+	return PackIndex{
 		hash:   hash,
 		crc:    crc,
 		offset: offset,
@@ -142,7 +142,7 @@ func GetObjectForHash(hash string, in io.ReadSeeker) (PackIndex, error) {
 		if err != nil {
 			return PackIndex{}, err
 		}
-		switch (strings.Compare(hash, hashOfObj[:len(hash)])) {
+		switch strings.Compare(hash, hashOfObj[:len(hash)]) {
 		case 0:
 			return ReadPackIndexAt(curr, in)
 		case 1:
