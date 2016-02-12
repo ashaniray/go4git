@@ -72,15 +72,19 @@ $ echo -e 'blob 14\0Hello, World!' | shasum
 ```
 
 ### showindex
-Displays the contents from pack-index file for a given index or an object hash
+Displays the contents from pack-index file for a given index or an object hash.
+"-c" option displays the number of objects in the index file
 
 #### Usage
 ```
-$ showindex -h 06041ea2909aadb02891e1d <index_file>
+$ showindex -c=true <index-file>
+479
+$ showindex <index-file>
+...contents of the index file...
 
-$ showindex -i 3 <index_file>
+$ showindex -h 06041ea2909aadb02891e1d <index_file>
 ```
-If both -i and -h is provided, -h option will take precedence
+If both -h and -c is provided, -c option will take precedence
 
 Compare with
 ```
@@ -96,14 +100,11 @@ as well.
 
 #### Usage
 ```
-$ showindex -h 06041ea2909aadb02891e1d96f2cee00ba7f7d59 <index_file>
-Offset: 590, Hash: 06041ea2909aadb02891e1d96f2cee00ba7f7d59, crc: 98db6920
+$ showindex -h 06041ea2909aad <index_file>
+590 06041ea2909aadb02891e1d96f2cee00ba7f7d59 (98db6920)
 $ readpackedobject -s 590 -t=true <pack_file>
 ```
-Or you can use the following compact form
-```
-$ readpackedobject -s $(showindex -h <hash> -o offset <idx_file>) <pack_file>
-```
+
 Compare with
 ```
 $ git verify-pack -v <pack_file>
