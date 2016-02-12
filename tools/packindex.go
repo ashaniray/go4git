@@ -19,10 +19,10 @@ type PackIndex struct {
 }
 
 func (idx PackIndex) String() string {
-	return fmt.Sprintf("Offset: %d, Hash: %s, crc: %s", idx.offset, idx.hash, idx.crc)
+	return fmt.Sprintf("%d %s (%s)", idx.offset, idx.hash, idx.crc)
 }
 
-func getTotalCount(in io.ReadSeeker) (uint, error) {
+func GetTotalCount(in io.ReadSeeker) (uint, error) {
 	_, err := in.Seek(0x404, 0)
 	if err != nil {
 		return 0, err
@@ -79,7 +79,7 @@ func readOffsetAt(indexAt int, count uint, in io.ReadSeeker) (int, error) {
 }
 
 func ReadPackIndexAt(indexAt int, in io.ReadSeeker) (PackIndex, error) {
-	count, err := getTotalCount(in)
+	count, err := GetTotalCount(in)
 	if err != nil {
 		return PackIndex{}, err
 	}

@@ -4,34 +4,56 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"io"
 )
 
-var indexAt = flag.Int("i", 0, "index")
-var hash = flag.String("h", "", "Hash of object")
-var output = flag.String("o", "all", "Ouputs a specific field: "+
-	"\"hash\", \"offset\", \"crc\"")
+var size = flag.Bool("s", false, "Prints the number of index objects")
+var hash = flag.String("h", "", "Hash of object to lookup")
+
+func showSize(in io.ReadSeeker) {
+	count, err := GetTotalCount(in)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintf(os.Stdout, "%d\n", count)
+}
+
+func showHashObject(in io.ReadSeeker) {
+	index, err := GetObjectForHash(*hash, in)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintf(os.Stdout, "%s\n", index)
+}
+
+func showAllIndex(in io.ReadSeeker) {
+	count, err := GetTotalCount(in)
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < int(count); i++ {
+		index, err := ReadPackIndexAt(i, in)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Fprintf(os.Stdout, "%s\n", index)
+	}
+}
 
 func main() {
 	flag.Parse()
 	f, err := GetArgInputFile()
-	var index PackIndex
-	if len(*hash) > 0 {
-		index, err = GetObjectForHash(*hash, f)
-	} else {
-		index, err = ReadPackIndexAt(*indexAt, f)
-	}
 	if err != nil {
 		panic(err)
 	}
-	switch *output {
-	case "hash":
-		fmt.Fprintf(os.Stdout, "%s\n", index.hash)
-	case "offset":
-		fmt.Fprintf(os.Stdout, "%d\n", index.offset)
-	case "crc":
-		fmt.Fprintf(os.Stdout, "%s\n", index.crc)
-	default:
-		fmt.Fprintf(os.Stdout, "%s\n", index)
+	if *size {
+		showSize(f)
+		return
 	}
+	if len(*hash) > 0 {
+		showHashObject(f)
+		return
+	}
+	showAllIndex(f)
 }
 
