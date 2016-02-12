@@ -8,11 +8,17 @@ Git library in pure GO (Under construction)
 repo := go4git.NewRepository("path/to/my/repository")
 ```
 
-
-#### Create a new bare repository
+#### Initialize a new empty repository
 
 ```
-bareRepo := go4git.NewBareRepository(".")
+go4git.InitAt("/path/to/repo", false)
+```
+
+
+#### Initialize a new bare repository
+
+```
+go4git.InitAt("/path/to/repo.git", true)
 ```
 
 #### Accessing a Repository
