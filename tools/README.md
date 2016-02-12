@@ -82,6 +82,11 @@ $ showindex -i 3 <index_file>
 ```
 If both -i and -h is provided, -h option will take precedence
 
+Compare with
+```
+$ git show-index < <idx_file_name>
+```
+
 ### readpackedobject
 Displays the packed object data for a given pack-file
 
@@ -98,6 +103,10 @@ $ readpackedobject -s 590 -t=true <pack_file>
 Or you can use the following compact form
 ```
 $ readpackedobject -s $(showindex -h <hash> -o offset <idx_file>) <pack_file>
+```
+Compare with
+```
+$ git verify-pack -v <pack_file>
 ```
 
 ### lstree
