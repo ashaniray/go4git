@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -69,26 +68,4 @@ func createFolders(root string) error {
 	}
 
 	return nil
-}
-
-func CreateRepository(root string, bare bool) error {
-
-	var gitDir string
-
-	if bare {
-		gitDir = root
-	} else {
-		gitDir = filepath.Join(root, ".git")
-	}
-
-	err := createFolders(gitDir)
-
-	if err != nil {
-		return err
-	}
-
-	head := filepath.Join(gitDir, "HEAD")
-	err = ioutil.WriteFile(head, []byte("ref: refs/heads/master"), os.ModePerm)
-
-	return err
 }

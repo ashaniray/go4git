@@ -18,7 +18,7 @@ func main() {
 	}
 
 	repoRoot := flag.Arg(0)
-	err := CreateRepository(repoRoot, *isBare)
+	err := InitAt(repoRoot, *isBare)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
