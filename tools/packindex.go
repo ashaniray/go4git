@@ -8,6 +8,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"os"
 )
 
 // Only Version 2..
@@ -23,7 +24,7 @@ func (idx PackIndex) String() string {
 }
 
 func GetTotalCount(in io.ReadSeeker) (uint, error) {
-	_, err := in.Seek(0x404, 0)
+	_, err := in.Seek(0x404, os.SEEK_SET)
 	if err != nil {
 		return 0, err
 	}
@@ -38,7 +39,7 @@ func GetTotalCount(in io.ReadSeeker) (uint, error) {
 
 func readHashAt(indexAt int, in io.ReadSeeker) (string, error) {
 	hashOffset := 0x408 + int64(indexAt)*0x14
-	_, err := in.Seek(hashOffset, 0)
+	_, err := in.Seek(hashOffset, os.SEEK_SET)
 	if err != nil {
 		return "", err
 	}
@@ -52,7 +53,7 @@ func readHashAt(indexAt int, in io.ReadSeeker) (string, error) {
 
 func readCRCAt(indexAt int, count uint, in io.ReadSeeker) (string, error) {
 	crcOffset := 0x408 + int64(count)*0x14 + int64(indexAt)*4
-	_, err := in.Seek(crcOffset, 0)
+	_, err := in.Seek(crcOffset, os.SEEK_SET)
 	if err != nil {
 		return "", err
 	}
@@ -66,7 +67,7 @@ func readCRCAt(indexAt int, count uint, in io.ReadSeeker) (string, error) {
 
 func readOffsetAt(indexAt int, count uint, in io.ReadSeeker) (int, error) {
 	indexOffset := 0x408 + int64(count)*0x18 + int64(indexAt)*4
-	_, err := in.Seek(indexOffset, 0)
+	_, err := in.Seek(indexOffset, os.SEEK_SET)
 	if err != nil {
 		return 0, err
 	}
@@ -110,7 +111,7 @@ func getFanoutValue(index int64, in io.ReadSeeker) (int, error) {
 	if index < 0 {
 		return 0, nil
 	}
-	_, err := in.Seek(8+index*4, 0)
+	_, err := in.Seek(8+index*4, os.SEEK_SET)
 	indexBuff := make([]byte, 4)
 	_, err = in.Read(indexBuff)
 	if err != nil {

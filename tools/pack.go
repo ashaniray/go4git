@@ -1,18 +1,24 @@
 package main
 
 import (
+	"bytes"
 	"compress/zlib"
+	"encoding/hex"
+	"fmt"
 	"io"
+	"os"
 )
 
 type ObjectType int
 
 type PackedObject struct {
-	objectType ObjectType
-	data       []byte
-	hashOfRef  string
-	refOffset  int64
-	size       int64
+	objectType  ObjectType
+	data        []byte
+	hashOfRef   string
+	refOffset   int64
+	size        int64
+	endOffset   int64
+	startOffset int64
 }
 
 const (
@@ -44,8 +50,19 @@ func (t ObjectType) String() string {
 	return "Unknown type"
 }
 
+func (o PackedObject) String() string {
+	str := fmt.Sprintf("%s %s %d %d %d", o.getHash(), o.objectType, o.size, o.endOffset-o.startOffset, o.startOffset)
+	str += fmt.Sprintf("  Offset end: %d", o.endOffset)
+	return str
+}
+
+func (o PackedObject) getHash() string {
+	b, _ := GenSHA1(bytes.NewReader(o.data), o.objectType.String())
+	return hex.EncodeToString(b)
+}
+
 func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, error) {
-	_, err := in.Seek(offset, 0)
+	_, err := in.Seek(offset, os.SEEK_SET)
 	if err != nil {
 		return PackedObject{}, err
 	}
@@ -75,7 +92,16 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, err
 	}
 	buff, err := readPackedBasicObjectData(in, objectSize)
 
-	return PackedObject{objectType: objectType, size: objectSize, refOffset: offset - negOffset, hashOfRef: hashOfRef, data: buff}, err
+	currOffset, _ := in.Seek(0, os.SEEK_CUR)
+
+	return PackedObject{objectType: objectType,
+		size:        objectSize,
+		refOffset:   offset - negOffset,
+		hashOfRef:   hashOfRef,
+		data:        buff,
+		startOffset: offset,
+		endOffset:   currOffset,
+	}, err
 }
 
 func readVariableSize(in io.Reader) (int64, error) {
@@ -119,7 +145,7 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 }
 
 func readPackedBasicObjectData(in io.Reader, objectSize int64) ([]byte, error) {
-	buff := make([]byte, objectSize)
+	buff := make([]byte, objectSize, objectSize)
 	zr, err := zlib.NewReader(in)
 	if err != nil {
 		return nil, err

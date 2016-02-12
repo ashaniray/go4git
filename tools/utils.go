@@ -22,7 +22,7 @@ func GetArgInputFile() (*os.File, error) {
 	}
 }
 
-func GenSHA1(in *os.File, objType string) ([]byte, error) {
+func GenSHA1(in io.Reader, objType string) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	length, err := buf.ReadFrom(in)
 	if err != nil {
