@@ -8,11 +8,11 @@ import (
 type ObjectType int
 
 type PackedObject struct {
-	objectType     ObjectType
-	data           []byte
-	hashOfRef      string
-	refOffset      int64
-	size           int64
+	objectType ObjectType
+	data       []byte
+	hashOfRef  string
+	refOffset  int64
+	size       int64
 }
 
 const (
@@ -106,7 +106,7 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 	}
 	c := int64(sizeByte[0])
 	size := c & 0x7f
-	for (c & 0x80) != 0  {
+	for (c & 0x80) != 0 {
 		size += 1
 		_, err = in.Read(sizeByte)
 		if err != nil {
@@ -117,7 +117,6 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 	}
 	return size, nil
 }
-
 
 func readPackedBasicObjectData(in io.Reader, objectSize int64) ([]byte, error) {
 	buff := make([]byte, objectSize)
@@ -149,4 +148,3 @@ func readOfsDeltaObjectData(in io.Reader, objectSize int64) (int64, error) {
 	}
 	return negativeOffset, err
 }
-

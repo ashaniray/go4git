@@ -1,9 +1,9 @@
 package main
 
 import (
+	"io/ioutil"
 	"path"
 	"path/filepath"
-	"io/ioutil"
 )
 
 type Repository struct {
@@ -44,7 +44,6 @@ func (r *Repository) LooseObjPath(sha string) string {
 func (r *Repository) LooseObjects() ([]string, error) {
 
 	objects := make([]string, 0)
-
 
 	objDir := filepath.Join(r.gitDir, "objects")
 

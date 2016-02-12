@@ -22,6 +22,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		return
 	}
-    
+
 	fmt.Fprintf(os.Stdout, repo.LooseObjPath(flag.Arg(0)))
 }

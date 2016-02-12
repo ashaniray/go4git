@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"io"
+	"os"
 )
 
 var size = flag.Bool("c", false, "Prints the number of index objects")
@@ -56,4 +56,3 @@ func main() {
 	}
 	showAllIndex(f)
 }
-

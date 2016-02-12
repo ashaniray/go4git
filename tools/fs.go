@@ -52,8 +52,6 @@ func getGitDir(root string) (string, error) {
 	}
 }
 
-
-
 func createFolders(root string) error {
 	var folders = []string{
 		"branches", "hooks", "info",
