@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-var size = flag.Bool("s", false, "Prints the number of index objects")
+var size = flag.Bool("c", false, "Prints the number of index objects")
 var hash = flag.String("h", "", "Hash of object to lookup")
 
 func showSize(in io.ReadSeeker) {
