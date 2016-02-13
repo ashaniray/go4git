@@ -5,6 +5,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"bytes"
+	"bufio"
 )
 
 type Repository struct {
@@ -72,6 +74,31 @@ func (r *Repository) LooseObjects() ([]string, error) {
 	return objects, nil
 
 }
+
+func (r *Repository) LookupCommit(sha string) (*Commit, error) {
+	lobjp := r.LooseObjPath(sha)
+	f, err := os.Open(lobjp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	buff := new(bytes.Buffer)
+	err = Unzlib(bufio.NewReader(f), buff)
+
+	if err != nil {
+		return nil, err
+	}
+	commit, err := parseCommit(buff)
+
+	if err != nil {
+		return nil, err
+	}
+
+	commit.Id = sha
+	return commit, nil
+}
+
 
 func InitAt(root string, bare bool) error {
 

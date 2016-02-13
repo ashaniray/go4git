@@ -11,7 +11,7 @@ func main() {
 
 	f, err := GetArgInputFile()
 
-	cmt, err := ParseCommit(f)
+	cmt, err := parseCommit(f)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)

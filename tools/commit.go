@@ -12,11 +12,16 @@ import (
 type CommitFields map[string]string
 
 type Commit struct {
+	Id        string
 	Tree      string
 	Parent    string
 	Author    *Person
 	Committer *Person
 	Message   string
+}
+
+func (c *Commit) HasParent() bool {
+	return len(c.Parent) != 0
 }
 
 func (c *Commit) String() string {
@@ -97,7 +102,7 @@ func (cf CommitFields) ToCommit() *Commit {
 	return commit
 }
 
-func ParseCommit(in io.Reader) (*Commit, error) {
+func parseCommit(in io.Reader) (*Commit, error) {
 
 	buff := new(bytes.Buffer)
 	buff.ReadFrom(in)
