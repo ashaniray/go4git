@@ -6,10 +6,12 @@ COMMON_FILES = \
 	pack.go \
 	person.go \
 	repository.go \
-	packindex.go
+	packindex.go \
+	tag.go \
+	object.go
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits \
- readpackedobject showindex repostat
+ readpackedobject showindex repostat pptag
 
 unzlib: unzlib.go common_files
 	go build unzlib.go ${COMMON_FILES}
@@ -49,6 +51,9 @@ ppcommit: ppcommit.go common_files
 
 repostat: repostat.go common_files
 	go build repostat.go ${COMMON_FILES}
+
+pptag: pptag.go common_files
+	go build pptag.go ${COMMON_FILES}
 
 common_files:${COMMON_FILES}
 

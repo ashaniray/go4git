@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 )
 
@@ -35,37 +34,12 @@ func (c *Commit) String() string {
 	return string(buff.Bytes())
 }
 
-func parseHeader(buff *bytes.Buffer) (int, error) {
-	header, err := buff.ReadString(0)
-
-	if err != nil {
-		return 0, err
-	}
-
-	xs := strings.Split(header, " ")
-	objType, objSize := xs[0], xs[1]
-
-	if objType != "commit" {
-		return 0, errors.New("not a commit object")
-	}
-
-	objSize = objSize[:len(objSize)-1] // remove trailing null
-
-	size, err := strconv.Atoi(objSize)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return size, nil
-}
-
 func kvPair(s string) (string, string) {
 	xs := strings.Split(s, " ")
 	return xs[0], strings.Join(xs[1:], " ")
 }
 
-func parseBody(buff *bytes.Buffer, size int) (CommitFields, error) {
+func parseCommitBody(buff *bytes.Buffer, size int) (CommitFields, error) {
 	body := string(buff.Next(size))
 
 	lines := strings.Split(body, "\n")
@@ -107,13 +81,17 @@ func parseCommit(in io.Reader) (*Commit, error) {
 	buff := new(bytes.Buffer)
 	buff.ReadFrom(in)
 
-	size, err := parseHeader(buff)
+	size, typ, err := parseHeader(buff)
 
 	if err != nil {
 		return nil, err
 	}
 
-	body, err := parseBody(buff, size)
+	if typ != "commit" {
+		return nil, errors.New("not a commit")
+	}
+
+	body, err := parseCommitBody(buff, size)
 
 	if err != nil {
 		return nil, err
