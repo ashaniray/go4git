@@ -74,7 +74,7 @@ sha := repo.Write([]byte("some content."), go4git.Blob)
 
 #### Commit Objects
 ```
-commit := repo.Lookup('a0ae5566e3c8a3bddffab21022056f0b5e03ef07')
+commit := repo.LookupCommit('a0ae5566e3c8a3bddffab21022056f0b5e03ef07')
 
 commit.Message()
 commit.Time()
