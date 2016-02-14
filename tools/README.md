@@ -186,10 +186,26 @@ Lists all commits starting from a given sha
 $ lscommits -d path/to/repo/ c3fd86874adcd6a1fad06c049b64026ce14a59e5
 ```
 
+
+### repostat
+prints stats about repository
+
+```
+$ repostat /path/to/repo
+```
+
+---
+
+### pptag
+Pretty print an annotated tag object.
+
+```
+$ cat `obj2file <tag-hash>` | unzlib | pptag
+```
+
 ## TODO
 - Change ```*os.File``` to ```io.Reader``` in the function arguments in ```utils.go```
 - **tree2fs** to convert a tree into a folder structure in the file-system.
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
-- **repostat** prints stats about repository
