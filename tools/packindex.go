@@ -14,13 +14,18 @@ import (
 // Only Version 2..
 
 type PackIndex struct {
-	hash   string
-	crc    string
-	offset int
+	Hash   string
+	CRC    string
+	Offset int
 }
 
+type ByOffset []PackIndex
+func (a ByOffset) Len() int {return len(a)}
+func (a ByOffset) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByOffset) Less(i, j int) bool { return a[i].Offset < a[j].Offset }
+
 func (idx PackIndex) String() string {
-	return fmt.Sprintf("%d %s (%s)", idx.offset, idx.hash, idx.crc)
+	return fmt.Sprintf("%d %s (%s)", idx.Offset, idx.Hash, idx.CRC)
 }
 
 func GetTotalCount(in io.ReadSeeker) (uint, error) {
@@ -79,6 +84,24 @@ func readOffsetAt(indexAt int, count uint, in io.ReadSeeker) (int, error) {
 	return int(binary.BigEndian.Uint32(indexBuff)), nil
 }
 
+func GetAllPackedIndex(in io.ReadSeeker) ([]PackIndex, error) {
+	count, err := GetTotalCount(in)
+	if err != nil {
+		panic(err)
+	}
+	indices := make([]PackIndex, count)
+	for i := 0; i < int(count); i++ {
+		// TODO: Optimize the reading.. The reading of ALL indices
+		// can be done serially. Instead of calling ReadPackIndexAt
+		// for each i, ALL the data can be read directly.
+		indices[i], err = ReadPackIndexAt(i, in)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return indices, err
+}
+
 func ReadPackIndexAt(indexAt int, in io.ReadSeeker) (PackIndex, error) {
 	count, err := GetTotalCount(in)
 	if err != nil {
@@ -101,9 +124,9 @@ func ReadPackIndexAt(indexAt int, in io.ReadSeeker) (PackIndex, error) {
 	}
 
 	return PackIndex{
-		hash:   hash,
-		crc:    crc,
-		offset: offset,
+		Hash:   hash,
+		CRC:    crc,
+		Offset: offset,
 	}, nil
 }
 
@@ -162,3 +185,4 @@ func GetObjectForHash(hash string, in io.ReadSeeker) (PackIndex, error) {
 	}
 	return PackIndex{}, errors.New("Object not found in index file")
 }
+

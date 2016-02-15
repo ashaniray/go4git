@@ -27,16 +27,12 @@ func showHashObject(in io.ReadSeeker) {
 }
 
 func showAllIndex(in io.ReadSeeker) {
-	count, err := GetTotalCount(in)
+	indices, err := GetAllPackedIndex(in)
 	if err != nil {
 		panic(err)
 	}
-	for i := 0; i < int(count); i++ {
-		index, err := ReadPackIndexAt(i, in)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Fprintf(os.Stdout, "%s\n", index)
+	for i := 0; i < len(indices); i++ {
+		fmt.Fprintf(os.Stdout, "%s\n", indices[i])
 	}
 }
 
