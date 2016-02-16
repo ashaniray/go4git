@@ -145,17 +145,17 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 }
 
 func readPackedBasicObjectData(in io.ReadSeeker, objectSize int64) ([]byte, error) {
-	buff := make([]byte, objectSize, objectSize)
+	buff := make([]byte, objectSize)
 	zr, err := zlib.NewReader(in)
 	if err != nil {
 		return nil, err
 	}
 	defer zr.Close()
-	_, err = zr.Read(buff)
+	n, err := zr.Read(buff)
 	if err != nil && err != io.EOF {
 		return nil, err
 	}
-	return buff, nil
+	return buff[:n], nil
 }
 
 func readRefDeltaObjectData(in io.Reader, objectSize int64) (string, error) {
