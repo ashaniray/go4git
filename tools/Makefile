@@ -1,61 +1,49 @@
-COMMON_FILES = \
-	utils.go \
-	tree.go \
-	fs.go \
-	commit.go \
-	pack.go \
-	person.go \
-	repository.go \
-	packindex.go \
-	tag.go \
-	object.go
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits \
  readpackedobject showindex repostat pptag
 
-unzlib: unzlib.go common_files
-	go build unzlib.go ${COMMON_FILES}
+unzlib: unzlib.go 
+	go build unzlib.go 
 
-zlib: zlib.go common_files
-	go build zlib.go ${COMMON_FILES}
+zlib: zlib.go 
+	go build zlib.go 
 
-showindex: showindex.go common_files
-	go build showindex.go ${COMMON_FILES}
+showindex: showindex.go 
+	go build showindex.go 
 
-gensha1: gensha1.go common_files
-	go build gensha1.go ${COMMON_FILES}
+gensha1: gensha1.go 
+	go build gensha1.go 
 
-readpackedobject: readpackedobject.go common_files
-	go build readpackedobject.go ${COMMON_FILES}
+readpackedobject: readpackedobject.go 
+	go build readpackedobject.go 
 
-lstree: lstree.go common_files
-	go build lstree.go ${COMMON_FILES}
+lstree: lstree.go 
+	go build lstree.go 
 
-lstype: lstype.go common_files
-	go build lstype.go ${COMMON_FILES}
+lstype: lstype.go 
+	go build lstype.go 
 
-obj2file: obj2file.go common_files
-	go build obj2file.go ${COMMON_FILES}
+obj2file: obj2file.go 
+	go build obj2file.go 
 
-lslobj: lslobj.go common_files
-	go build lslobj.go ${COMMON_FILES}
+lslobj: lslobj.go 
+	go build lslobj.go 
 
-initr: initr.go common_files
-	go build initr.go ${COMMON_FILES}
+initr: initr.go 
+	go build initr.go 
 
-lscommits: lscommits.go common_files
-	go build lscommits.go ${COMMON_FILES}
+lscommits: lscommits.go 
+	go build lscommits.go 
 
-ppcommit: ppcommit.go common_files
-	go build ppcommit.go ${COMMON_FILES}
+ppcommit: ppcommit.go 
+	go build ppcommit.go 
 
-repostat: repostat.go common_files
-	go build repostat.go ${COMMON_FILES}
+repostat: repostat.go 
+	go build repostat.go 
 
-pptag: pptag.go common_files
-	go build pptag.go ${COMMON_FILES}
+pptag: pptag.go 
+	go build pptag.go 
 
-common_files:${COMMON_FILES}
 
 install: unzlib
 	cp unzlib ${GOPATH}/bin

@@ -6,6 +6,7 @@ import (
 	"os"
 	"io"
 	"sort"
+	"github.com/ashaniray/go4git"
 )
 
 var offset = flag.Int64("s", -1, "The offset to read from the pack file")
@@ -14,58 +15,58 @@ var verifyPack = flag.Bool("v", true, "Produce output of git pack-verify -v")
 var debug = flag.Bool("d", false, "Outputs debug information to debug the code")
 
 func showDebugInfo(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
-	indices, err := GetAllPackedIndex(inIdx)
+	indices, err := go4git.GetAllPackedIndex(inIdx)
 	if err != nil {
 		panic(err)
 	}
-	sort.Sort(ByOffset(indices))
+	sort.Sort(go4git.ByOffset(indices))
 	cnt := len(indices)
-	o, err := ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack, inIdx)
+	o, err := go4git.ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack, inIdx)
 	if err != nil {
 		panic(err)
 	}
 	for i := 0; i < cnt - 1; i++ {
-		next, _ := ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
+		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
 		fmt.Fprintf(os.Stdout, "################ Data at %d #############\n", i)
 		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d Data(Below)\n%s\n", 
 			o.GetHash(), 
-			o.objectType, 
-			o.size,
-			next.startOffset - o.startOffset,
-			o.startOffset,
-			o.refOffset,
-			o.data,
+			o.Type, 
+			o.Size,
+			next.StartOffset - o.StartOffset,
+			o.StartOffset,
+			o.RefOffset,
+			o.Data,
 				)
 		o = next
 	}
 }
 
 func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
-	indices, err := GetAllPackedIndex(inIdx)
+	indices, err := go4git.GetAllPackedIndex(inIdx)
 	if err != nil {
 		panic(err)
 	}
-	sort.Sort(ByOffset(indices))
+	sort.Sort(go4git.ByOffset(indices))
 	cnt := len(indices)
-	o, err := ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack, inIdx)
+	o, err := go4git.ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack, inIdx)
 	if err != nil {
 		panic(err)
 	}
 	for i := 0; i < cnt - 1; i++ {
-		next, _ := ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
+		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
 		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d\n", 
 			o.GetHash(), 
-			o.objectType, 
-			o.size,
-			next.startOffset - o.startOffset,
-			o.startOffset,
-			o.refOffset,
+			o.Type, 
+			o.Size,
+			next.StartOffset - o.StartOffset,
+			o.StartOffset,
+			o.RefOffset,
 			)
 		o = next
 	}
@@ -73,7 +74,7 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 
 func main() {
 	flag.Parse()
-	f, err := GetArgInputFile()
+	f, err := go4git.GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}
@@ -97,16 +98,16 @@ func main() {
 	}
 
 	if *offset != -1 {
-		p, err := ReadPackedObjectAtOffset(*offset, f, inIdx)
+		p, err := go4git.ReadPackedObjectAtOffset(*offset, f, inIdx)
 		if err != nil {
 			panic(err)
 		}
 		if *verbose {
-			fmt.Fprintf(os.Stdout, "Object at [%d] => Type: %s, Size: %d\n", *offset, p.objectType, p.size)
-			fmt.Fprintf(os.Stdout, "  ObjRef: %s, ObjOffset: %d\n", p.hashOfRef, p.refOffset)
+			fmt.Fprintf(os.Stdout, "Object at [%d] => Type: %s, Size: %d\n", *offset, p.Type, p.Size)
+			fmt.Fprintf(os.Stdout, "  ObjRef: %s, ObjOffset: %d\n", p.HashOfRef, p.RefOffset)
 			fmt.Fprintf(os.Stdout, "  Data(starts below):\n")
 		}
-		fmt.Fprintf(os.Stdout, "%s", p.data)
+		fmt.Fprintf(os.Stdout, "%s", p.Data)
 	}
 }
 

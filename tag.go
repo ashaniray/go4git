@@ -1,4 +1,4 @@
-package main
+package go4git
 
 import (
 	"io"
@@ -62,7 +62,7 @@ func parseTagBody(buff *bytes.Buffer, size int) (TagFields, error) {
 
 }
 
-func parseTag(in io.Reader) (*Tag, error) {
+func ParseTag(in io.Reader) (*Tag, error) {
 
 	buff := new(bytes.Buffer)
 	buff.ReadFrom(in)

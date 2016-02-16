@@ -1,4 +1,4 @@
-package main
+package go4git
 
 import (
 	"bytes"
@@ -12,13 +12,13 @@ import (
 type ObjectType int
 
 type PackedObject struct {
-	objectType  ObjectType
-	data        []byte
-	hashOfRef   string
-	refOffset   int64
-	size        int64
-	startOffset int64
-	deltaData   []byte
+	Type  ObjectType
+	Data        []byte
+	HashOfRef   string
+	RefOffset   int64
+	Size        int64
+	StartOffset int64
+	DeltaData   []byte
 }
 
 const (
@@ -51,12 +51,12 @@ func (t ObjectType) String() string {
 }
 
 func (o PackedObject) String() string {
-	str := fmt.Sprintf("%s %s %d %d", o.GetHash(), o.objectType, o.size, o.startOffset)
+	str := fmt.Sprintf("%s %s %d %d", o.GetHash(), o.Type, o.Size, o.StartOffset)
 	return str
 }
 
 func (o PackedObject) GetHash() string {
-	b, _ := GenSHA1(bytes.NewReader(o.data), o.objectType.String())
+	b, _ := GenSHA1(bytes.NewReader(o.Data), o.Type.String())
 	return hex.EncodeToString(b)
 }
 
@@ -91,22 +91,23 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	}
 	buff, err := readPackedBasicObjectData(in, objectSize)
 
-	obj := PackedObject{objectType: objectType,
-		size:        objectSize,
-		refOffset:   offset - negOffset,
-		hashOfRef:   hashOfRef,
-		data:        buff,
-		startOffset: offset,
-		deltaData: nil,
+	obj := PackedObject{
+        Type: objectType,
+		Size:        objectSize,
+		RefOffset:   offset - negOffset,
+		HashOfRef:   hashOfRef,
+		Data:        buff,
+		StartOffset: offset,
+		DeltaData: nil,
 	}
 	if objectType == OFS_DELTA {
 		base, err := ReadPackedObjectAtOffset(offset - negOffset, in, inIndex)
 		if err != nil {
 			return obj, err
 		}
-		targetBuff := applyDeltaBuffer(base.data, buff)
-		obj.deltaData = buff
-		obj.data = targetBuff
+		targetBuff := applyDeltaBuffer(base.Data, buff)
+		obj.DeltaData = buff
+		obj.Data = targetBuff
 	}
 	if objectType == REF_DELTA {
 		packedIndex, err := GetObjectForHash(hashOfRef, inIndex)
@@ -117,9 +118,9 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		if err != nil {
 			return obj, err
 		}
-		targetBuff := applyDeltaBuffer(base.data, buff)
-		obj.deltaData = buff
-		obj.data = targetBuff
+		targetBuff := applyDeltaBuffer(base.Data, buff)
+		obj.DeltaData = buff
+		obj.Data = targetBuff
 	}
 	return obj, err
 

@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"github.com/ashaniray/go4git"
 )
 
 var size = flag.Bool("c", false, "Prints the number of index objects")
 var hash = flag.String("h", "", "Hash of object to lookup")
 
 func showSize(in io.ReadSeeker) {
-	count, err := GetTotalCount(in)
+	count, err := go4git.GetTotalCount(in)
 	if err != nil {
 		panic(err)
 	}
@@ -19,7 +20,7 @@ func showSize(in io.ReadSeeker) {
 }
 
 func showHashObject(in io.ReadSeeker) {
-	index, err := GetObjectForHash(*hash, in)
+	index, err := go4git.GetObjectForHash(*hash, in)
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +28,7 @@ func showHashObject(in io.ReadSeeker) {
 }
 
 func showAllIndex(in io.ReadSeeker) {
-	indices, err := GetAllPackedIndex(in)
+	indices, err := go4git.GetAllPackedIndex(in)
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +39,7 @@ func showAllIndex(in io.ReadSeeker) {
 
 func main() {
 	flag.Parse()
-	f, err := GetArgInputFile()
+	f, err := go4git.GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}

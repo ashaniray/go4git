@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"github.com/ashaniray/go4git"
 )
 
 var repoRoot = flag.String("d", ".", "path to repository root")
@@ -11,7 +12,7 @@ var repoRoot = flag.String("d", ".", "path to repository root")
 func main() {
 	flag.Parse()
 
-	repo, err := NewRepository(*repoRoot)
+	repo, err := go4git.NewRepository(*repoRoot)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)

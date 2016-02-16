@@ -1,4 +1,4 @@
-package main
+package go4git
 
 import (
 	"bytes"
@@ -76,7 +76,7 @@ func (cf CommitFields) ToCommit() *Commit {
 	return commit
 }
 
-func parseCommit(in io.Reader) (*Commit, error) {
+func ParseCommit(in io.Reader) (*Commit, error) {
 
 	buff := new(bytes.Buffer)
 	buff.ReadFrom(in)

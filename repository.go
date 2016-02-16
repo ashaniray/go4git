@@ -1,4 +1,4 @@
-package main
+package go4git
 
 import (
 	"io/ioutil"
@@ -89,7 +89,7 @@ func (r *Repository) LookupCommit(sha string) (*Commit, error) {
 	if err != nil {
 		return nil, err
 	}
-	commit, err := parseCommit(buff)
+	commit, err := ParseCommit(buff)
 
 	if err != nil {
 		return nil, err

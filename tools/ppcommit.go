@@ -4,14 +4,15 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"github.com/ashaniray/go4git"
 )
 
 func main() {
 	flag.Parse()
 
-	f, err := GetArgInputFile()
+	f, err := go4git.GetArgInputFile()
 
-	cmt, err := parseCommit(f)
+	cmt, err := go4git.ParseCommit(f)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)

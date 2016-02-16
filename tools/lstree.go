@@ -4,15 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"github.com/ashaniray/go4git"
 )
 
 func main() {
 	flag.Parse()
-	f, err := GetArgInputFile()
+	f, err := go4git.GetArgInputFile()
 	if err != nil {
 		panic(err)
 	}
-	tree, err := ReadTree(f)
+	tree, err := go4git.ReadTree(f)
 	if err != nil {
 		panic(err)
 	}

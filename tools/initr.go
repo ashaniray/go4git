@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"github.com/ashaniray/go4git"
 )
 
 var isBare = flag.Bool("bare", false, "create a bare repository instead")
@@ -18,7 +19,7 @@ func main() {
 	}
 
 	repoRoot := flag.Arg(0)
-	err := InitAt(repoRoot, *isBare)
+	err := go4git.InitAt(repoRoot, *isBare)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)

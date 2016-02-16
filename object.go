@@ -1,4 +1,4 @@
-package main
+package go4git
 
 // holds all functions common to all object types
 

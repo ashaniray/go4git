@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"github.com/ashaniray/go4git"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		return
 	}
 
-	repo, err := NewRepository(flag.Arg(0))
+	repo, err := go4git.NewRepository(flag.Arg(0))
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
