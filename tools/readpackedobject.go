@@ -10,7 +10,7 @@ import (
 
 var offset = flag.Int64("s", -1, "The offset to read from the pack file")
 var verbose = flag.Bool("t", false, "Output verbose information")
-var verify = flag.Bool("v", true, "Produce output of git pack-verify -v")
+var verifyPack = flag.Bool("v", true, "Produce output of git pack-verify -v")
 
 func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	indices, err := GetAllPackedIndex(inIdx)
@@ -28,12 +28,14 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("%s %s %d %d %d\n", 
+		fmt.Printf("%s %s %d %d %d %d\n", 
 			o.GetHash(), 
 			o.objectType, 
 			o.size,
 			next.startOffset - o.startOffset,
-			o.startOffset)
+			o.startOffset,
+			o.refOffset,
+			)
 		o = next
 	}
 }
@@ -45,21 +47,26 @@ func main() {
 		panic(err)
 	}
 	packFile := f.Name()
-	idxName := packFile[:len(packFile) - 4] + "idx"
-	inIdx, err := os.Open(idxName)
-	if err != nil {
-		panic(err)
+	if *verifyPack {
+		idxName := packFile[:len(packFile) - 4] + "idx"
+		inIdx, err := os.Open(idxName)
+		if err != nil {
+			panic(err)
+		}
+		showVerifyPack(f, inIdx)
+		return
 	}
-	showVerifyPack(f, inIdx)
-	return
-	p, err := ReadPackedObjectAtOffset(*offset, f)
-	if err != nil {
-		panic(err)
+	if *offset != -1 {
+		p, err := ReadPackedObjectAtOffset(*offset, f)
+		if err != nil {
+			panic(err)
+		}
+		if *verbose {
+			fmt.Fprintf(os.Stdout, "Object at [%d] => Type: %s, Size: %d\n", *offset, p.objectType, p.size)
+			fmt.Fprintf(os.Stdout, "  ObjRef: %s, ObjOffset: %d\n", p.hashOfRef, p.refOffset)
+			fmt.Fprintf(os.Stdout, "  Data(starts below):\n")
+		}
+		fmt.Fprintf(os.Stdout, "%s", p.data)
 	}
-	if *verbose {
-		fmt.Fprintf(os.Stdout, "Object at [%d] => Type: %s, Size: %d\n", *offset, p.objectType, p.size)
-		fmt.Fprintf(os.Stdout, "  ObjRef: %s, ObjOffset: %d\n", p.hashOfRef, p.refOffset)
-		fmt.Fprintf(os.Stdout, "  Data(starts below):\n")
-	}
-	fmt.Fprintf(os.Stdout, "%s", p.data)
 }
+
