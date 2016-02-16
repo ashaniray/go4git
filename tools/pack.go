@@ -18,6 +18,7 @@ type PackedObject struct {
 	refOffset   int64
 	size        int64
 	startOffset int64
+	deltaData   []byte
 }
 
 const (
@@ -59,12 +60,7 @@ func (o PackedObject) GetHash() string {
 	return hex.EncodeToString(b)
 }
 
-func printOffset(in io.ReadSeeker, msg string) {
-	curr, _ := in.Seek(0, os.SEEK_CUR)
-	fmt.Fprintf(os.Stdout, "%s: %d\n", msg, curr)
-}
-
-func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, error) {
+func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSeeker) (PackedObject, error) {
 	_, err := in.Seek(offset, os.SEEK_SET)
 	if err != nil {
 		return PackedObject{}, err
@@ -95,13 +91,38 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker) (PackedObject, err
 	}
 	buff, err := readPackedBasicObjectData(in, objectSize)
 
-	return PackedObject{objectType: objectType,
+	obj := PackedObject{objectType: objectType,
 		size:        objectSize,
 		refOffset:   offset - negOffset,
 		hashOfRef:   hashOfRef,
 		data:        buff,
 		startOffset: offset,
-	}, err
+		deltaData: nil,
+	}
+	if objectType == OFS_DELTA {
+		base, err := ReadPackedObjectAtOffset(offset - negOffset, in, inIndex)
+		if err != nil {
+			return obj, err
+		}
+		targetBuff := applyDeltaBuffer(base.data, buff)
+		obj.deltaData = buff
+		obj.data = targetBuff
+	}
+	if objectType == REF_DELTA {
+		packedIndex, err := GetObjectForHash(hashOfRef, inIndex)
+		if err == nil {
+			return obj, err
+		}
+		base, err := ReadPackedObjectAtOffset(int64(packedIndex.Offset), in, inIndex)
+		if err != nil {
+			return obj, err
+		}
+		targetBuff := applyDeltaBuffer(base.data, buff)
+		obj.deltaData = buff
+		obj.data = targetBuff
+	}
+	return obj, err
+
 }
 
 func readVariableSize(in io.Reader) (int64, error) {
@@ -166,6 +187,91 @@ func readRefDeltaObjectData(in io.Reader, objectSize int64) (string, error) {
 	}
 	return string(hashObject[:n]), err
 }
+
+func readSizeInDelta(delta []byte) (size int, bytesRead uint) {
+	if len(delta) == 0 {
+		return 0, 0
+	}
+	for {
+		c := int(delta[bytesRead])
+		tmpSize := c & 0x7f
+		size = size | (tmpSize << (7*bytesRead))
+		bytesRead++
+		if (c & 0x80) == 0 {
+			break
+		}
+	}
+	return size, bytesRead
+}
+
+func getCopyOrPasteInDelta(delta []byte) (isCopy bool, srcOffset uint, length uint, bytesRead uint) {
+	length = 0
+	c := delta[bytesRead]
+	bytesRead++
+	switch (c & 0x80) >> 7 {
+	case 1:
+		isCopy = true
+		for i := uint(0); i < 4; i++ {
+			if c & ( 1 << i) != 0 {
+				b := delta[bytesRead]
+				bytesRead++
+				srcOffset = (uint(b) << uint(8*i)) | srcOffset
+			}
+		}
+		for i := uint(0); i < 3; i++ {
+			if c & ( 1 << (i + 4)) != 0 {
+				b := delta[bytesRead]
+				bytesRead++
+				length = (uint(b) << uint(8*i)) | length
+			}
+		}
+	case 0:
+		isCopy = false
+		length = uint(delta[0])
+	default:
+		panic("Impossible code")
+	}
+	return
+}
+
+func applyDeltaBuffer(src []byte, delta []byte) []byte {
+	if len(delta) == 0 {
+		return src
+	}
+	var deltaOffset uint = 0
+	srcSize, bytesRead := readSizeInDelta(delta[deltaOffset:])
+	deltaOffset += bytesRead
+
+	destSize, bytesRead := readSizeInDelta(delta[deltaOffset:])
+	deltaOffset += bytesRead
+	
+	_, _ = srcSize, destSize
+
+	target := make([]byte, destSize)
+	var targetOffset uint = 0
+
+	for {
+		isCopy, srcOffset, length, bytesRead := getCopyOrPasteInDelta(delta[deltaOffset:])
+		if length < 1 {
+			break
+		}
+		var buff []byte
+		if isCopy {
+			buff = src[srcOffset : srcOffset + length]
+		} else {
+			buff = delta[deltaOffset : deltaOffset + length]
+			deltaOffset += length
+		}
+		deltaOffset += bytesRead
+		copy(target[targetOffset:], buff)
+		targetOffset += length
+		if len(delta) <= int(deltaOffset) {
+			break
+		}
+	}
+	return target
+}
+
 
 func readOfsDeltaObjectData(in io.Reader, objectSize int64) (int64, error) {
 	negativeOffset, err := readVariableSizeForOFS(in)

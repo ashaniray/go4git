@@ -20,12 +20,12 @@ func showDebugInfo(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	}
 	sort.Sort(ByOffset(indices))
 	cnt := len(indices)
-	o, err := ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack)
+	o, err := ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack, inIdx)
 	if err != nil {
 		panic(err)
 	}
 	for i := 0; i < cnt - 1; i++ {
-		next, _ := ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack)
+		next, _ := ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
@@ -50,12 +50,12 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	}
 	sort.Sort(ByOffset(indices))
 	cnt := len(indices)
-	o, err := ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack)
+	o, err := ReadPackedObjectAtOffset(int64(indices[0].Offset), inPack, inIdx)
 	if err != nil {
 		panic(err)
 	}
 	for i := 0; i < cnt - 1; i++ {
-		next, _ := ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack)
+		next, _ := ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
@@ -79,29 +79,25 @@ func main() {
 	}
 	packFile := f.Name()
 	idxName := packFile[:len(packFile) - 4] + "idx"
+	inIdx, err := os.Open(idxName)
+	if err != nil {
+		panic(err)
+	}
 
 	// TODO: This in only for easy debugging purposes..
 	// To be deleted...
 	if *debug {
-		inIdx, err := os.Open(idxName)
-		if err != nil {
-			panic(err)
-		}
 		showDebugInfo(f, inIdx)
 		return
 	}
 
 	if *verifyPack {
-		inIdx, err := os.Open(idxName)
-		if err != nil {
-			panic(err)
-		}
 		showVerifyPack(f, inIdx)
 		return
 	}
 
 	if *offset != -1 {
-		p, err := ReadPackedObjectAtOffset(*offset, f)
+		p, err := ReadPackedObjectAtOffset(*offset, f, inIdx)
 		if err != nil {
 			panic(err)
 		}
