@@ -1,6 +1,13 @@
 # go4git
 Git library in pure GO (Under construction)
 
+```
+import "github.com/ashaniray/go4git"
+```
+
+:skull:
+---
+
 # Usage
 
 #### Open an existing repository.
