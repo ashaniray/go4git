@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"github.com/ashaniray/go4git"
+	"os"
 )
 
 var repoRoot = flag.String("d", ".", "path to repository root")

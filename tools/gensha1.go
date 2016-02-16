@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"github.com/ashaniray/go4git"
+	"os"
 )
 
 var objType = flag.String("t", "blob", "The type of object, e.g. tree, blob, commit, or tag")

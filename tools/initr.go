@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/ashaniray/go4git"
 	"os"
 	"path"
-	"github.com/ashaniray/go4git"
 )
 
 var isBare = flag.Bool("bare", false, "create a bare repository instead")

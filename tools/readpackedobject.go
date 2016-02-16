@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-	"io"
-	"sort"
 	"github.com/ashaniray/go4git"
+	"io"
+	"os"
+	"sort"
 )
 
 var offset = flag.Int64("s", -1, "The offset to read from the pack file")
@@ -25,21 +25,21 @@ func showDebugInfo(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	if err != nil {
 		panic(err)
 	}
-	for i := 0; i < cnt - 1; i++ {
-		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
+	for i := 0; i < cnt-1; i++ {
+		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i+1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
 		fmt.Fprintf(os.Stdout, "################ Data at %d #############\n", i)
-		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d Data(Below)\n%s\n", 
-			o.GetHash(), 
-			o.Type, 
+		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d Data(Below)\n%s\n",
+			o.GetHash(),
+			o.Type,
 			o.Size,
-			next.StartOffset - o.StartOffset,
+			next.StartOffset-o.StartOffset,
 			o.StartOffset,
 			o.RefOffset,
 			o.Data,
-				)
+		)
 		o = next
 	}
 }
@@ -55,19 +55,19 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	if err != nil {
 		panic(err)
 	}
-	for i := 0; i < cnt - 1; i++ {
-		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i + 1].Offset), inPack, inIdx)
+	for i := 0; i < cnt-1; i++ {
+		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i+1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d\n", 
-			o.GetHash(), 
-			o.Type, 
+		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d\n",
+			o.GetHash(),
+			o.Type,
 			o.Size,
-			next.StartOffset - o.StartOffset,
+			next.StartOffset-o.StartOffset,
 			o.StartOffset,
 			o.RefOffset,
-			)
+		)
 		o = next
 	}
 }
@@ -79,7 +79,7 @@ func main() {
 		panic(err)
 	}
 	packFile := f.Name()
-	idxName := packFile[:len(packFile) - 4] + "idx"
+	idxName := packFile[:len(packFile)-4] + "idx"
 	inIdx, err := os.Open(idxName)
 	if err != nil {
 		panic(err)
@@ -110,4 +110,3 @@ func main() {
 		fmt.Fprintf(os.Stdout, "%s", p.Data)
 	}
 }
-

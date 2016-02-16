@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"flag"
-	"os"
 	"github.com/ashaniray/go4git"
+	"os"
 )
 
 func main() {

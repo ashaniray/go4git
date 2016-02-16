@@ -1,12 +1,12 @@
 package go4git
 
 import (
+	"bufio"
+	"bytes"
 	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
-	"bytes"
-	"bufio"
 )
 
 type Repository struct {
@@ -98,7 +98,6 @@ func (r *Repository) LookupCommit(sha string) (*Commit, error) {
 	commit.Id = sha
 	return commit, nil
 }
-
 
 func InitAt(root string, bare bool) error {
 

@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"os"
 	"github.com/ashaniray/go4git"
+	"os"
 )
 
 func main() {

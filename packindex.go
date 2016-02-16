@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strconv"
 	"strings"
-	"os"
 )
 
 // Only Version 2..
@@ -20,8 +20,9 @@ type PackIndex struct {
 }
 
 type ByOffset []PackIndex
-func (a ByOffset) Len() int {return len(a)}
-func (a ByOffset) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+
+func (a ByOffset) Len() int           { return len(a) }
+func (a ByOffset) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByOffset) Less(i, j int) bool { return a[i].Offset < a[j].Offset }
 
 func (idx PackIndex) String() string {
@@ -185,4 +186,3 @@ func GetObjectForHash(hash string, in io.ReadSeeker) (PackIndex, error) {
 	}
 	return PackIndex{}, errors.New("Object not found in index file")
 }
-

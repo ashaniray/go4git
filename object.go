@@ -4,10 +4,9 @@ package go4git
 
 import (
 	"bytes"
-	"strings"
 	"strconv"
+	"strings"
 )
-
 
 func parseHeader(buff *bytes.Buffer) (int, string, error) {
 	header, err := buff.ReadString(0)
@@ -19,7 +18,6 @@ func parseHeader(buff *bytes.Buffer) (int, string, error) {
 	xs := strings.Split(header, " ")
 	objType, objSize := xs[0], xs[1]
 
-
 	objSize = objSize[:len(objSize)-1] // remove trailing null
 
 	size, err := strconv.Atoi(objSize)
@@ -30,5 +28,3 @@ func parseHeader(buff *bytes.Buffer) (int, string, error) {
 
 	return size, objType, nil
 }
-
-

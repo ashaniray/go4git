@@ -1,19 +1,18 @@
 package go4git
 
 import (
-	"io"
 	"bytes"
-	"strings"
 	"errors"
 	"fmt"
+	"io"
+	"strings"
 )
-
 
 type Tag struct {
 	Name       string
 	TargetId   string
 	TargetType string
-	Tagger     *Person	
+	Tagger     *Person
 	Message    string
 }
 
@@ -33,11 +32,11 @@ type TagFields map[string]string
 
 func (tf TagFields) ToTag() *Tag {
 	tag := new(Tag)
-	tag.Name         = tf["tag"]
-	tag.TargetId     = tf["object"]
-	tag.TargetType   = tf["type"]
-	tag.Tagger       = parsePerson(tf["tagger"])
-	tag.Message      = tf["message"]
+	tag.Name = tf["tag"]
+	tag.TargetId = tf["object"]
+	tag.TargetType = tf["type"]
+	tag.Tagger = parsePerson(tf["tagger"])
+	tag.Message = tf["message"]
 	return tag
 }
 
@@ -77,7 +76,7 @@ func ParseTag(in io.Reader) (*Tag, error) {
 		return nil, errors.New("not a tag")
 	}
 
-	body, err := parseTagBody(buff, size) 
+	body, err := parseTagBody(buff, size)
 
 	if err != nil {
 		return nil, err

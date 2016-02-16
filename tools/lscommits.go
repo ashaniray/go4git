@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"github.com/ashaniray/go4git"
+	"os"
 )
 
 var repoRoot = flag.String("d", ".", "path to a git repo")
@@ -28,7 +28,7 @@ func main() {
 
 	c, err := repo.LookupCommit(startSha)
 
-	if err != nil  {
+	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR:", err)
 		return
 	}

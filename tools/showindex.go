@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/ashaniray/go4git"
 	"io"
 	"os"
-	"github.com/ashaniray/go4git"
 )
 
 var size = flag.Bool("c", false, "Prints the number of index objects")
