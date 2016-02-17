@@ -203,6 +203,21 @@ Pretty print an annotated tag object.
 $ cat `obj2file <tag-hash>` | unzlib | pptag
 ```
 
+
+---
+### ppfixtures
+Prints test fixtures to stdout.
+
+```
+$ ppfixtures -h
+Usage of ppfixtures:
+  -c string
+    	print fixture for object type. [all|commit|blob|tree|tag] (default "all")
+  -s string
+    	print fixture of given size. [xs|sm|md|lg|xl] (default "sm")
+```
+
+
 ## TODO
 - Change ```*os.File``` to ```io.Reader``` in the function arguments in ```utils.go```
 - **tree2fs** to convert a tree into a folder structure in the file-system.
