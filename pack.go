@@ -21,7 +21,7 @@ type PackedObject struct {
 	DeltaData   []byte
 	ActualType   ObjectType
 	Hash        string
-	RefLevel    uint
+	RefLevel    int
 	BaseHash    string
 }
 

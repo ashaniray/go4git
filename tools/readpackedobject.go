@@ -55,18 +55,30 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	if err != nil {
 		panic(err)
 	}
+
+	chainLength := make(map[int] int)
 	for i := 0; i < cnt-1; i++ {
 		next, _ := go4git.ReadPackedObjectAtOffset(int64(indices[i+1].Offset), inPack, inIdx)
 		if err != nil {
 			panic(err)
 		}
+		chainLength[next.RefLevel]++
 		str := fmt.Sprintf("%s %s\t%d %d %d", o.Hash, o.ActualType, o.Size, next.StartOffset - o.StartOffset, o.StartOffset)
 		if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
 			str += fmt.Sprintf(" %d %s", o.RefLevel, o.BaseHash)
 		}
 		fmt.Fprintf(os.Stdout, "%s\n", str)
 		o = next
+		if i == cnt - 2 {
+			end := 0
+			str := fmt.Sprintf("%s %s\t%d %d %d", next.Hash, next.ActualType, next.Size, end, next.StartOffset)
+			if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
+				str += fmt.Sprintf(" %d %s", o.RefLevel, o.BaseHash)
+			}
+			fmt.Fprintf(os.Stdout, "%s\n", str)
+		}
 	}
+	fmt.Printf("Stats: %v\n", chainLength)
 }
 
 func main() {
