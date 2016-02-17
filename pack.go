@@ -61,6 +61,7 @@ func (o PackedObject) GetHash() string {
 }
 
 func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSeeker) (PackedObject, error) {
+	fmt.Printf("Reading object for offset %d\n", offset)
 	_, err := in.Seek(offset, os.SEEK_SET)
 	if err != nil {
 		return PackedObject{}, err
@@ -72,13 +73,18 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	if err != nil {
 		return PackedObject{}, err
 	}
-	objectType := ObjectType((int(headByte[0]) & 0x70) >> 4)
-	objectSize := (int64(headByte[0])) & int64(0x0f)
-	size, err := readVariableSize(in)
-	if err != nil {
-		return PackedObject{}, err
+
+	firstByte := int(headByte[0])
+	objectType := ObjectType((firstByte & 0x70) >> 4)
+	objectSize := (int64(firstByte)) & int64(0x0f)
+
+	if firstByte & 0x80 > 0 {
+		size, err := readVariableSize(in)
+		if err != nil {
+			return PackedObject{}, err
+		}
+		objectSize = objectSize + (size << 4)
 	}
-	objectSize = objectSize + (size << 4)
 
 	// Read the data
 	var hashOfRef string
@@ -101,6 +107,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		DeltaData:   nil,
 	}
 	if objectType == OFS_DELTA {
+		fmt.Printf("Applying ofs_delta\n")
 		base, err := ReadPackedObjectAtOffset(offset-negOffset, in, inIndex)
 		if err != nil {
 			return obj, err
@@ -110,6 +117,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		obj.Data = targetBuff
 	}
 	if objectType == REF_DELTA {
+		fmt.Printf("Applying ref delta\n")
 		packedIndex, err := GetObjectForHash(hashOfRef, inIndex)
 		if err == nil {
 			return obj, err
@@ -167,6 +175,7 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 }
 
 func readPackedBasicObjectData(in io.ReadSeeker, objectSize int64) ([]byte, error) {
+	fmt.Printf("Object Size: %d\n", objectSize)
 	buff := make([]byte, objectSize)
 	zr, err := zlib.NewReader(in)
 	if err != nil {
