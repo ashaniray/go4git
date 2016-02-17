@@ -92,11 +92,6 @@ func main() {
 		return
 	}
 
-	if *verifyPack {
-		showVerifyPack(f, inIdx)
-		return
-	}
-
 	if *offset != -1 {
 		p, err := go4git.ReadPackedObjectAtOffset(*offset, f, inIdx)
 		if err != nil {
@@ -108,5 +103,12 @@ func main() {
 			fmt.Fprintf(os.Stdout, "  Data(starts below):\n")
 		}
 		fmt.Fprintf(os.Stdout, "%s", p.Data)
+		return
 	}
+
+	if *verifyPack {
+		showVerifyPack(f, inIdx)
+		return
+	}
+
 }

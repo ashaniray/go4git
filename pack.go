@@ -61,7 +61,6 @@ func (o PackedObject) GetHash() string {
 }
 
 func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSeeker) (PackedObject, error) {
-	fmt.Printf("Reading object for offset %d\n", offset)
 	_, err := in.Seek(offset, os.SEEK_SET)
 	if err != nil {
 		return PackedObject{}, err
@@ -106,8 +105,8 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		StartOffset: offset,
 		DeltaData:   nil,
 	}
+	// Patch the deltas....
 	if objectType == OFS_DELTA {
-		fmt.Printf("Applying ofs_delta\n")
 		base, err := ReadPackedObjectAtOffset(offset-negOffset, in, inIndex)
 		if err != nil {
 			return obj, err
@@ -117,7 +116,6 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		obj.Data = targetBuff
 	}
 	if objectType == REF_DELTA {
-		fmt.Printf("Applying ref delta\n")
 		packedIndex, err := GetObjectForHash(hashOfRef, inIndex)
 		if err == nil {
 			return obj, err
@@ -175,7 +173,6 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 }
 
 func readPackedBasicObjectData(in io.ReadSeeker, objectSize int64) ([]byte, error) {
-	fmt.Printf("Object Size: %d\n", objectSize)
 	buff := make([]byte, objectSize)
 	zr, err := zlib.NewReader(in)
 	if err != nil {
@@ -215,7 +212,9 @@ func readSizeInDelta(delta []byte) (size int, bytesRead uint) {
 }
 
 func getCopyOrPasteInDelta(delta []byte) (isCopy bool, srcOffset uint, length uint, bytesRead uint) {
-	length = 0
+	if len(delta) == 0 {
+		return
+	}
 	c := delta[bytesRead]
 	bytesRead++
 	switch (c & 0x80) >> 7 {
@@ -262,6 +261,7 @@ func applyDeltaBuffer(src []byte, delta []byte) []byte {
 
 	for {
 		isCopy, srcOffset, length, bytesRead := getCopyOrPasteInDelta(delta[deltaOffset:])
+		deltaOffset += bytesRead
 		if length < 1 {
 			break
 		}
@@ -272,7 +272,6 @@ func applyDeltaBuffer(src []byte, delta []byte) []byte {
 			buff = delta[deltaOffset : deltaOffset+length]
 			deltaOffset += length
 		}
-		deltaOffset += bytesRead
 		copy(target[targetOffset:], buff)
 		targetOffset += length
 		if len(delta) <= int(deltaOffset) {
@@ -289,3 +288,4 @@ func readOfsDeltaObjectData(in io.Reader, objectSize int64) (int64, error) {
 	}
 	return negativeOffset, err
 }
+
