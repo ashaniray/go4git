@@ -19,7 +19,7 @@ type PackedObject struct {
 	Size        int64
 	StartOffset int64
 	DeltaData   []byte
-	ActualType   ObjectType
+	ActualType  ObjectType
 	Hash        string
 	RefLevel    int
 	BaseHash    string
@@ -84,7 +84,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	objectType := ObjectType((firstByte & 0x70) >> 4)
 	objectSize := (int64(firstByte)) & int64(0x0f)
 
-	if firstByte & 0x80 > 0 {
+	if firstByte&0x80 > 0 {
 		size, err := readVariableSize(in)
 		if err != nil {
 			return PackedObject{}, err
@@ -303,4 +303,3 @@ func readOfsDeltaObjectData(in io.Reader, objectSize int64) (int64, error) {
 	}
 	return negativeOffset, err
 }
-

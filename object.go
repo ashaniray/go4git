@@ -4,9 +4,9 @@ package go4git
 
 import (
 	"bytes"
+	"os"
 	"strconv"
 	"strings"
-	"os"
 )
 
 func parseHeader(buff *bytes.Buffer) (int, string, error) {
