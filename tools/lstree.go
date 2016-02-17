@@ -13,7 +13,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	tree, err := go4git.ReadTree(f)
+	tree, err := go4git.ParseTree(f)
 	if err != nil {
 		panic(err)
 	}

@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"strconv"
 	"strings"
+	"os"
 )
 
 func parseHeader(buff *bytes.Buffer) (int, string, error) {
@@ -27,4 +28,13 @@ func parseHeader(buff *bytes.Buffer) (int, string, error) {
 	}
 
 	return size, objType, nil
+}
+
+func ReadObjectType(in *os.File) (int, string, error) {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(in)
+	if err != nil {
+		return 0, "", err
+	}
+	return parseHeader(buf)
 }

@@ -13,7 +13,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	t, _, err := go4git.ReadType(f)
+	_, t, err := go4git.ReadObjectType(f)
 	if err != nil {
 		panic(err)
 	}
