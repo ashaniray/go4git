@@ -32,7 +32,7 @@ func showDebugInfo(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 		}
 		fmt.Fprintf(os.Stdout, "################ Data at %d #############\n", i)
 		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d Data(Below)\n%s\n",
-			o.GetHash(),
+			o.Hash,
 			o.Type,
 			o.Size,
 			next.StartOffset-o.StartOffset,
@@ -60,14 +60,11 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Fprintf(os.Stdout, "%s %s %d %d %d %d\n",
-			o.GetHash(),
-			o.Type,
-			o.Size,
-			next.StartOffset-o.StartOffset,
-			o.StartOffset,
-			o.RefOffset,
-		)
+		str := fmt.Sprintf("%s %s\t%d %d %d", o.Hash, o.ActualType, o.Size, next.StartOffset - o.StartOffset, o.StartOffset)
+		if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
+			str += fmt.Sprintf(" %d %s", o.RefLevel, o.BaseHash)
+		}
+		fmt.Fprintf(os.Stdout, "%s\n", str)
 		o = next
 	}
 }

@@ -19,6 +19,10 @@ type PackedObject struct {
 	Size        int64
 	StartOffset int64
 	DeltaData   []byte
+	ActualType   ObjectType
+	Hash        string
+	RefLevel    uint
+	BaseHash    string
 }
 
 const (
@@ -51,12 +55,15 @@ func (t ObjectType) String() string {
 }
 
 func (o PackedObject) String() string {
-	str := fmt.Sprintf("%s %s %d %d", o.GetHash(), o.Type, o.Size, o.StartOffset)
+	str := fmt.Sprintf("%s %s\t%d %d", o.Hash, o.ActualType, o.Size, o.StartOffset)
+	if o.Type == REF_DELTA || o.Type == OFS_DELTA {
+		str += fmt.Sprintf(" %d %s", o.RefLevel, o.BaseHash)
+	}
 	return str
 }
 
-func (o PackedObject) GetHash() string {
-	b, _ := GenSHA1(bytes.NewReader(o.Data), o.Type.String())
+func (o PackedObject) getHash() string {
+	b, _ := GenSHA1(bytes.NewReader(o.Data), o.ActualType.String())
 	return hex.EncodeToString(b)
 }
 
@@ -104,6 +111,8 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		Data:        buff,
 		StartOffset: offset,
 		DeltaData:   nil,
+		RefLevel:    0,
+		ActualType:  objectType,
 	}
 	// Patch the deltas....
 	if objectType == OFS_DELTA {
@@ -114,6 +123,9 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		targetBuff := applyDeltaBuffer(base.Data, buff)
 		obj.DeltaData = buff
 		obj.Data = targetBuff
+		obj.ActualType = base.ActualType
+		obj.RefLevel = base.RefLevel + 1
+		obj.BaseHash = base.Hash
 	}
 	if objectType == REF_DELTA {
 		packedIndex, err := GetObjectForHash(hashOfRef, inIndex)
@@ -127,9 +139,12 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		targetBuff := applyDeltaBuffer(base.Data, buff)
 		obj.DeltaData = buff
 		obj.Data = targetBuff
+		obj.ActualType = base.ActualType
+		obj.RefLevel = base.RefLevel + 1
+		obj.BaseHash = base.Hash
 	}
+	obj.Hash = obj.getHash()
 	return obj, err
-
 }
 
 func readVariableSize(in io.Reader) (int64, error) {
