@@ -2,6 +2,7 @@
 
 INDEX_FILE="sample.idx"
 
+echo "diff <(showindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE})"
 diff <(showindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE})
 if [ $? -eq 0 ]
 then
