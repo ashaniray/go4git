@@ -91,18 +91,20 @@ Compare with
 $ git show-index < <idx_file_name>
 ```
 
-### readpackedobject
+### showpack
 Displays the packed object data for a given pack-file
-
-Typically, provide the offset provided by ```showindex``` as the argument for ```-s <offset>``` in the 
-```readpackedobject``` command. The optional ```-t=true``` prints out metadata information
-as well.
 
 #### Usage
 ```
-$ showindex -h 06041ea2909aad <index_file>
+$ showindex -v <pack_file>
 590 06041ea2909aadb02891e1d96f2cee00ba7f7d59 (98db6920)
-$ readpackedobject -s 590 -t=true <pack_file>
+...
+$ showindex -s 12 <pack_file>
+<Contents of object at index 12 in packfile displayed>
+...
+$ showindex -t -s 12 <pack_file>
+<Contents of object at index 12 in packfile displayed along with header information>
+...
 ```
 
 Compare with
