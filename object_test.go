@@ -9,19 +9,16 @@ func TestCommitHdr(t *testing.T) {
 	buff := bytes.NewBuffer(COMMIT_DATA)
 	size, typ, err := parseHeader(buff)
 
-	exSize := 221
-	exTyp := "commit"
-
 	if err != nil {
-		t.Errorf("Expected no error while parsing commit header but got %s", err)
+		t.Fatalf("Falied to parse commit header - [%s]", err)
 	}
 
-	if size != exSize {
-		t.Errorf("Expected size to be %d but got %d", exSize, size)
+	if got, want := size, 221; got != want {
+			t.Errorf("size = %d; want %d", got, want)
 	}
 
-	if typ != exTyp {
-		t.Errorf("Expected type to be %s but got %s", exTyp, typ)
+	if got, want := typ, "commit"; got != want {
+			t.Errorf("type = %s; want %s", got, want)
 	}
 }
 
@@ -29,19 +26,16 @@ func TestTagHdr(t *testing.T) {
 	buff := bytes.NewBuffer(TAG_DATA)
 	size, typ, err := parseHeader(buff)
 
-	exSize := 224
-	exTyp := "tag"
-
 	if err != nil {
-		t.Errorf("Expected no error while parsing tag header but got %s", err)
+		t.Fatalf("Failed to parse tag header - [%s]", err)
 	}
 
-	if size != exSize {
-		t.Errorf("Expected size to be %d but got %d", exSize, size)
+	if got, want := size, 224; got != want {
+			t.Errorf("size = %d; want %d", got, want)
 	}
 
-	if typ != exTyp {
-		t.Errorf("Expected type to be %s but got %s", exTyp, typ)
+	if got, want := typ, "tag"; got != want {
+			t.Errorf("type = %s; want %s", got, want)
 	}
 }
 
@@ -49,19 +43,16 @@ func TestTreeHdr(t *testing.T) {
 	buff := bytes.NewBuffer(TREE_DATA)
 	size, typ, err := parseHeader(buff)
 
-	exSize := 127
-	exTyp := "tree"
-
 	if err != nil {
-		t.Errorf("Expected no error while parsing tree header but got %s", err)
+		t.Fatalf("Failed to parse tree header - [%s]", err)
 	}
 
-	if size != exSize {
-		t.Errorf("Expected size to be %d but got %d", exSize, size)
+	if got, want := size, 127; got != want {
+			t.Errorf("size = %d; want %d", got, want)
 	}
 
-	if typ != exTyp {
-		t.Errorf("Expected type to be %s but got %s", exTyp, typ)
+	if got, want := typ, "tree"; got != want {
+			t.Errorf("type = %s; want %s", got, want)
 	}
 }
 
@@ -69,18 +60,15 @@ func TestBlobHdr(t *testing.T) {
 	buff := bytes.NewBuffer(BLOB_DATA)
 	size, typ, err := parseHeader(buff)
 
-	exSize := 105
-	exTyp := "blob"
-
 	if err != nil {
-		t.Errorf("Expected no error while parsing blob header but got %s", err)
+		t.Fatalf("Failed to parse blob header - [%s]", err)
 	}
 
-	if size != exSize {
-		t.Errorf("Expected size to be %d but got %d", exSize, size)
+	if got, want := size, 105; got != want {
+			t.Errorf("size = %d; want %d", got, want)
 	}
 
-	if typ != exTyp {
-		t.Errorf("Expected type to be %s but got %s", exTyp, typ)
+	if got, want := typ, "blob"; got != want {
+			t.Errorf("type = %s; want %s", got, want)
 	}
 }
