@@ -1,6 +1,6 @@
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits \
- readpackedobject showindex repostat pptag ppfixtures
+ showpack showindex repostat pptag ppfixtures
 
 unzlib: unzlib.go 
 	go build unzlib.go 
@@ -14,8 +14,8 @@ showindex: showindex.go
 gensha1: gensha1.go 
 	go build gensha1.go 
 
-readpackedobject: readpackedobject.go 
-	go build readpackedobject.go 
+showpack: showpack.go 
+	go build showpack.go 
 
 lstree: lstree.go 
 	go build lstree.go 
@@ -53,7 +53,7 @@ install: unzlib
 	cp zlib ${GOPATH}/bin
 	cp showindex ${GOPATH}/bin
 	cp gensha1 ${GOPATH}/bin
-	cp readpackedobject ${GOPATH}/bin
+	cp showpack ${GOPATH}/bin
 	cp obj2file ${GOPATH}/bin
 	cp lstree ${GOPATH}/bin
 	cp lstype ${GOPATH}/bin
