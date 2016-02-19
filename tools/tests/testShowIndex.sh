@@ -1,6 +1,12 @@
 #!/bin/bash
 
-INDEX_FILE="sample.idx"
+if [ $# -ne 1 ]
+then
+	echo "Usage: testShowIndex <index_file>"
+	exit -1
+fi
+
+INDEX_FILE=$1
 
 echo "diff <(showindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE})"
 diff <(showindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE})

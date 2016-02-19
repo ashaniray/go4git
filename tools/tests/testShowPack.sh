@@ -1,9 +1,15 @@
 #!/bin/bash
 
-INDEX_FILE="sample.pack"
+if [ $# -ne 1 ]
+then
+	echo "Usage: testShowPack <pack_file>"
+	exit -1
+fi
 
-echo "diff -b <(showpack -v ${INDEX_FILE}) <(git verify-pack -v ${INDEX_FILE})"
-diff -b <(showpack -v ${INDEX_FILE}) <(git verify-pack -v ${INDEX_FILE})
+PACK_FILE=$1
+
+echo "diff -b <(showpack -v ${PACK_FILE}) <(git verify-pack -v ${PACK_FILE})"
+diff -b <(showpack -v ${PACK_FILE}) <(git verify-pack -v ${PACK_FILE})
 if [ $? -eq 0 ]
 then
 	echo "Success"
