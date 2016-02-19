@@ -9,6 +9,13 @@ import (
 	"strings"
 )
 
+type Object struct {
+	id      string
+	objType string
+	size    int
+	data    []byte
+}
+
 func parseHeader(buff *bytes.Buffer) (int, string, error) {
 	header, err := buff.ReadString(0)
 

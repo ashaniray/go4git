@@ -11,25 +11,49 @@ import (
 type CommitFields map[string]string
 
 type Commit struct {
-	Id        string
-	Tree      string
-	Parent    string
-	Author    *Person
-	Committer *Person
-	Message   string
+	id        string
+	tree      string
+	parent    string
+	author    *Person
+	committer *Person
+	message   string
+}
+
+func (c *Commit) Id() string {
+	return c.id
+}
+
+func (c *Commit) Tree() string {
+	return c.tree
+}
+
+func (c *Commit) Parent() string {
+	return c.parent
+}
+
+func (c *Commit) Author() *Person {
+	return c.author
+}
+
+func (c *Commit) Committer() *Person {
+	return c.committer
+}
+
+func (c *Commit) Message() string {
+	return c.message
 }
 
 func (c *Commit) HasParent() bool {
-	return len(c.Parent) != 0
+	return len(c.parent) != 0
 }
 
 func (c *Commit) String() string {
 	buff := new(bytes.Buffer)
-	fmt.Fprintf(buff, "Tree:      %s\n", c.Tree)
-	fmt.Fprintf(buff, "Parent:    %s\n", c.Parent)
-	fmt.Fprintf(buff, "Author:    %s\n", c.Author)
-	fmt.Fprintf(buff, "Committer: %s\n", c.Committer)
-	fmt.Fprintf(buff, "Message:   %s\n", c.Message)
+	fmt.Fprintf(buff, "Tree:      %s\n", c.tree)
+	fmt.Fprintf(buff, "Parent:    %s\n", c.parent)
+	fmt.Fprintf(buff, "Author:    %s\n", c.author)
+	fmt.Fprintf(buff, "Committer: %s\n", c.committer)
+	fmt.Fprintf(buff, "Message:   %s\n", c.message)
 
 	return string(buff.Bytes())
 }
@@ -63,15 +87,15 @@ func parseCommitBody(buff *bytes.Buffer, size int) (CommitFields, error) {
 func (cf CommitFields) ToCommit() *Commit {
 	commit := new(Commit)
 
-	commit.Tree = cf["tree"]
-	commit.Author = parsePerson(cf["author"])
-	commit.Committer = parsePerson(cf["committer"])
-	commit.Message = cf["message"]
+	commit.tree = cf["tree"]
+	commit.author = parsePerson(cf["author"])
+	commit.committer = parsePerson(cf["committer"])
+	commit.message = cf["message"]
 
 	parent, ok := cf["parent"]
 
 	if ok {
-		commit.Parent = parent
+		commit.parent = parent
 	}
 	return commit
 }

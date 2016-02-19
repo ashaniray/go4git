@@ -9,34 +9,58 @@ import (
 )
 
 type Tag struct {
-	Name       string
-	TargetId   string
-	TargetType string
-	Tagger     *Person
-	Message    string
+	name       string
+	targetId   string
+	targetType string
+	tagger     *Person
+	message    string
 }
 
 func (t *Tag) String() string {
 	buff := new(bytes.Buffer)
 
-	fmt.Fprintf(buff, "Name:             %s\n", t.Name)
-	fmt.Fprintf(buff, "Target ID:        %s\n", t.TargetId)
-	fmt.Fprintf(buff, "Target Type:      %s\n", t.TargetType)
-	fmt.Fprintf(buff, "Tagger:           %s\n", t.Tagger)
-	fmt.Fprintf(buff, "Message:          %s\n", t.Message)
+	fmt.Fprintf(buff, "Name:             %s\n", t.name)
+	fmt.Fprintf(buff, "Target ID:        %s\n", t.targetId)
+	fmt.Fprintf(buff, "Target Type:      %s\n", t.targetType)
+	fmt.Fprintf(buff, "Tagger:           %s\n", t.tagger)
+	fmt.Fprintf(buff, "Message:          %s\n", t.message)
 
 	return string(buff.Bytes())
 }
+
+
+func (t Tag) Name() string {
+	return t.name
+}
+
+func (t Tag) TargetId() string {
+	return t.targetId
+}
+
+func (t Tag) TargetType() string {
+	return t.targetType
+}
+
+func (t Tag) Tagger() *Person {
+	return t.tagger
+}
+
+
+func (t Tag) Message() string {
+	return t.message
+}
+
+
 
 type TagFields map[string]string
 
 func (tf TagFields) ToTag() *Tag {
 	tag := new(Tag)
-	tag.Name = tf["tag"]
-	tag.TargetId = tf["object"]
-	tag.TargetType = tf["type"]
-	tag.Tagger = parsePerson(tf["tagger"])
-	tag.Message = tf["message"]
+	tag.name = tf["tag"]
+	tag.targetId = tf["object"]
+	tag.targetType = tf["type"]
+	tag.tagger = parsePerson(tf["tagger"])
+	tag.message = tf["message"]
 	return tag
 }
 

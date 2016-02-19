@@ -95,7 +95,7 @@ func (r *Repository) LookupCommit(sha string) (*Commit, error) {
 		return nil, err
 	}
 
-	commit.Id = sha
+	commit.id = sha
 	return commit, nil
 }
 

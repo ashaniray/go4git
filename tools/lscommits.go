@@ -40,7 +40,7 @@ func main() {
 			break
 		}
 
-		c, err = repo.LookupCommit(c.Parent)
+		c, err = repo.LookupCommit(c.Parent())
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "ERROR:", err)
