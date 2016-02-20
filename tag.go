@@ -28,7 +28,6 @@ func (t *Tag) String() string {
 	return string(buff.Bytes())
 }
 
-
 func (t Tag) Name() string {
 	return t.name
 }
@@ -45,12 +44,9 @@ func (t Tag) Tagger() *Person {
 	return t.tagger
 }
 
-
 func (t Tag) Message() string {
 	return t.message
 }
-
-
 
 type TagFields map[string]string
 
