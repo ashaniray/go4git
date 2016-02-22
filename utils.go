@@ -36,6 +36,12 @@ func GenSHA1(in io.Reader, objType string) ([]byte, error) {
 	return h.Sum(nil), nil
 }
 
+func UnzlibToBuffer(in io.Reader) ([]byte, error) {
+	var b bytes.Buffer
+	err := Unzlib(in, &b)
+	return b.Bytes(), err
+}
+
 func Unzlib(in io.Reader, out io.Writer) error {
 	r, err := zlib.NewReader(in)
 	if err != nil {

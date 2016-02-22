@@ -2,7 +2,6 @@ package go4git
 
 import (
 	"bytes"
-	"compress/zlib"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -101,7 +100,8 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	case OFS_DELTA:
 		negOffset, err = readOfsDeltaObjectData(in, objectSize)
 	}
-	buff, err := readPackedBasicObjectData(in, objectSize)
+
+	buff, err := UnzlibToBuffer(in)
 
 	obj := PackedObject{
 		Type:        objectType,
@@ -185,20 +185,6 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 		size = (size << 7) + (c & 0x7f)
 	}
 	return size, nil
-}
-
-func readPackedBasicObjectData(in io.ReadSeeker, objectSize int64) ([]byte, error) {
-	buff := make([]byte, objectSize)
-	zr, err := zlib.NewReader(in)
-	if err != nil {
-		return nil, err
-	}
-	defer zr.Close()
-	n, err := zr.Read(buff)
-	if err != nil && err != io.EOF {
-		return nil, err
-	}
-	return buff[:n], nil
 }
 
 func readRefDeltaObjectData(in io.Reader, objectSize int64) (string, error) {

@@ -68,7 +68,7 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 		if i == cnt-2 {
 			end, _ := inPack.Seek(0, os.SEEK_END)
 			end -= 20
-			str := fmt.Sprintf("%s %s\t%d %d %d", next.Hash, next.ActualType, next.Size, end - next.StartOffset, next.StartOffset)
+			str := fmt.Sprintf("%s %s\t%d %d %d", next.Hash, next.ActualType, next.Size, end-next.StartOffset, next.StartOffset)
 			if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
 				str += fmt.Sprintf(" %d %s", o.RefLevel, o.BaseHash)
 			}
