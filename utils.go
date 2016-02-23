@@ -47,16 +47,15 @@ func Unzlib(in io.Reader, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	defer r.Close()
 	_, err = io.Copy(out, r)
+	r.Close()
 	return err
 }
 
 func Zlib(in io.Reader, out io.Writer) error {
 	w := zlib.NewWriter(out)
-	defer w.Close()
 	_, err := io.Copy(w, in)
-
+	w.Close()
 	return err
 }
 

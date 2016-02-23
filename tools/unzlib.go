@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"github.com/ashaniray/go4git"
 	"os"
@@ -13,7 +12,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = go4git.Unzlib(bufio.NewReader(f), bufio.NewWriter(os.Stdout))
+	err = go4git.Unzlib(f, os.Stdout)
 	if err != nil {
 		panic(err)
 	}
