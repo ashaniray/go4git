@@ -9,7 +9,7 @@ fi
 PACK_FILE=$1
 
 echo "diff -b <(showpack -v ${PACK_FILE}) <(git verify-pack -v ${PACK_FILE})"
-diff -b <(showpack -v ${PACK_FILE}) <(git verify-pack -v ${PACK_FILE})
+diff -b <(showpack -v ${PACK_FILE}) <(git verify-pack -v ${PACK_FILE}) > /dev/null
 if [ $? -eq 0 ]
 then
 	echo "Success"

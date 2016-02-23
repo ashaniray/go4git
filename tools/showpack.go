@@ -10,7 +10,8 @@ import (
 )
 
 var offset = flag.Int64("s", -1, "The offset to read from the pack file")
-var verbose = flag.Bool("t", false, "Output verbose information")
+var header = flag.Bool("h", false, "Output header information")
+var data = flag.Bool("d", true, "Output data for object")
 var verifyPack = flag.Bool("v", true, "Produce output of git pack-verify -v")
 var fileName string
 
@@ -62,7 +63,7 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 				i,
 				indices[i].Offset,
 				fileName,
-				indices[i].Hash,
+				go4git.HashByteToString(indices[i].Hash),
 				go4git.HashByteToString(o.Hash),
 			))
 		}
@@ -99,7 +100,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		if *verbose {
+		if *header {
 			fmt.Printf("Details of Object at offset [%d] \n", *offset)
 			fmt.Printf(" Type: %s\n", p.Type)
 			fmt.Printf(" HashOfRef: %s\n", go4git.HashByteToString(p.HashOfRef))
@@ -110,9 +111,11 @@ func main() {
 			fmt.Printf(" Hash: %s\n", go4git.HashByteToString(p.Hash))
 			fmt.Printf(" RefLevel: %d\n", p.RefLevel)
 			fmt.Printf(" BaseHash: %s\n", go4git.HashByteToString(p.BaseHash))
-			fmt.Printf(" ---Data(starts below):---\n")
 		}
-		fmt.Printf("%s", p.Data)
+		if *data {
+			fmt.Printf(" ---Data(starts below):---\n")
+			fmt.Printf("%s", p.Data)
+		}
 		return
 	}
 

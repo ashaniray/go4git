@@ -53,7 +53,7 @@ func (t ObjectType) String() string {
 }
 
 func (o PackedObject) String() string {
-	str := fmt.Sprintf("Details of Object at offset [%d] \n", o.StartOffset)
+	str := fmt.Sprintf("Packed Object at offset [%d] \n", o.StartOffset)
 	str += fmt.Sprintf(" Type: %s\n", o.Type)
 	str += fmt.Sprintf(" HashOfRef: %s\n", HashByteToString(o.HashOfRef))
 	str += fmt.Sprintf(" RefOffset: %d\n", o.RefOffset)
@@ -121,7 +121,6 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		RefLevel:    0,
 		ActualType:  objectType,
 	}
-	//fmt.Printf("Current Object:\n%s\n#########\n", obj)
 	// Patch the deltas....
 	if objectType == OFS_DELTA {
 		base, err := ReadPackedObjectAtOffset(offset-negOffset, in, inIndex)
@@ -137,7 +136,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	}
 	if objectType == REF_DELTA {
 		packedIndex, err := GetObjectForHash(HashByteToString(hashOfRef), inIndex)
-		if err == nil {
+		if err != nil {
 			return obj, err
 		}
 		base, err := ReadPackedObjectAtOffset(int64(packedIndex.Offset), in, inIndex)
