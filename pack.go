@@ -2,7 +2,6 @@ package go4git
 
 import (
 	"bytes"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"os"
@@ -13,15 +12,15 @@ type ObjectType int
 type PackedObject struct {
 	Type        ObjectType
 	Data        []byte
-	HashOfRef   string
+	HashOfRef   []byte
 	RefOffset   int64
 	Size        int64
 	StartOffset int64
 	DeltaData   []byte
 	ActualType  ObjectType
-	Hash        string
+	Hash        []byte
 	RefLevel    int
-	BaseHash    string
+	BaseHash    []byte
 }
 
 const (
@@ -54,16 +53,24 @@ func (t ObjectType) String() string {
 }
 
 func (o PackedObject) String() string {
-	str := fmt.Sprintf("%s %s\t%d %d", o.Hash, o.ActualType, o.Size, o.StartOffset)
-	if o.Type == REF_DELTA || o.Type == OFS_DELTA {
-		str += fmt.Sprintf(" %d %s", o.RefLevel, o.BaseHash)
-	}
+	str := fmt.Sprintf("Details of Object at offset [%d] \n", o.StartOffset)
+	str += fmt.Sprintf(" Type: %s\n", o.Type)
+	str += fmt.Sprintf(" HashOfRef: %s\n", HashByteToString(o.HashOfRef))
+	str += fmt.Sprintf(" RefOffset: %d\n", o.RefOffset)
+	str += fmt.Sprintf(" Size: %d\n", o.Size)
+	str += fmt.Sprintf(" StartOffset: %d\n", o.StartOffset)
+	str += fmt.Sprintf(" ActualType: %s\n", o.ActualType)
+	str += fmt.Sprintf(" Hash: %s\n", HashByteToString(o.Hash))
+	str += fmt.Sprintf(" RefLevel: %d\n", o.RefLevel)
+	str += fmt.Sprintf(" BaseHash: %s\n", o.BaseHash)
+	str += fmt.Sprintf(" ---Data(starts below):---\n")
+	str += fmt.Sprintf("%s", o.Data)
 	return str
 }
 
-func (o PackedObject) getHash() string {
+func (o PackedObject) getHash() []byte {
 	b, _ := GenSHA1(bytes.NewReader(o.Data), o.ActualType.String())
-	return hex.EncodeToString(b)
+	return b
 }
 
 func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSeeker) (PackedObject, error) {
@@ -92,7 +99,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	}
 
 	// Read the data
-	var hashOfRef string
+	var hashOfRef []byte
 	var negOffset int64
 	switch objectType {
 	case REF_DELTA:
@@ -114,6 +121,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		RefLevel:    0,
 		ActualType:  objectType,
 	}
+	//fmt.Printf("Current Object:\n%s\n#########\n", obj)
 	// Patch the deltas....
 	if objectType == OFS_DELTA {
 		base, err := ReadPackedObjectAtOffset(offset-negOffset, in, inIndex)
@@ -128,7 +136,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		obj.BaseHash = base.Hash
 	}
 	if objectType == REF_DELTA {
-		packedIndex, err := GetObjectForHash(hashOfRef, inIndex)
+		packedIndex, err := GetObjectForHash(HashByteToString(hashOfRef), inIndex)
 		if err == nil {
 			return obj, err
 		}
@@ -187,13 +195,13 @@ func readVariableSizeForOFS(in io.Reader) (int64, error) {
 	return size, nil
 }
 
-func readRefDeltaObjectData(in io.Reader, objectSize int64) (string, error) {
+func readRefDeltaObjectData(in io.Reader, objectSize int64) ([]byte, error) {
 	hashObject := make([]byte, 20)
 	n, err := in.Read(hashObject)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(hashObject[:n]), err
+	return hashObject[:n], err
 }
 
 func readSizeInDelta(delta []byte) (size int, bytesRead uint) {

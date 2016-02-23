@@ -14,7 +14,7 @@ import (
 // Only Version 2..
 
 type PackIndex struct {
-	Hash   string
+	Hash   []byte
 	CRC    string
 	Offset int
 }
@@ -26,7 +26,7 @@ func (a ByOffset) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByOffset) Less(i, j int) bool { return a[i].Offset < a[j].Offset }
 
 func (idx PackIndex) String() string {
-	return fmt.Sprintf("%d %s (%s)", idx.Offset, idx.Hash, idx.CRC)
+	return fmt.Sprintf("%d %s (%s)", idx.Offset, HashByteToString(idx.Hash), idx.CRC)
 }
 
 func GetTotalCount(in io.ReadSeeker) (uint, error) {
@@ -43,18 +43,18 @@ func GetTotalCount(in io.ReadSeeker) (uint, error) {
 	return uint(count), nil
 }
 
-func readHashAt(indexAt int, in io.ReadSeeker) (string, error) {
+func readHashAt(indexAt int, in io.ReadSeeker) ([]byte, error) {
 	hashOffset := 0x408 + int64(indexAt)*0x14
 	_, err := in.Seek(hashOffset, os.SEEK_SET)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	hashBuff := make([]byte, 20)
 	_, err = in.Read(hashBuff)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return hex.EncodeToString(hashBuff), nil
+	return hashBuff, nil
 }
 
 func readCRCAt(indexAt int, count uint, in io.ReadSeeker) (string, error) {
@@ -167,7 +167,8 @@ func GetObjectForHash(hash string, in io.ReadSeeker) (PackIndex, error) {
 		if err != nil {
 			return PackIndex{}, err
 		}
-		switch strings.Compare(hash, hashOfObj[:len(hash)]) {
+		hashOfObjAsStr := HashByteToString(hashOfObj)
+		switch strings.Compare(hash, hashOfObjAsStr[:len(hash)]) {
 		case 0:
 			return ReadPackIndexAt(curr, in)
 		case 1:

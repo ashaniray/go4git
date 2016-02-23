@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"encoding/hex"
 )
 
 /////// Begin changes by Ashani ///////////////////
@@ -58,5 +59,10 @@ func Zlib(in io.Reader, out io.Writer) error {
 	w.Close()
 	return err
 }
+
+func HashByteToString(b []byte) string {
+	return hex.EncodeToString(b)
+}
+
 
 ///////////////////End changes by Ashani////////////
