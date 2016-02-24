@@ -22,7 +22,11 @@ func showStats(stats map[int]int) {
 			maxChain = k
 		}
 	}
-	fmt.Printf("non delta: %d objects\n", stats[0])
+	fmt.Printf("non delta: %d object", stats[0])
+	if stats[0] > 1 {
+		fmt.Printf("s")
+	}
+	fmt.Printf("\n")
 	for i := 1; i <= maxChain; i++ {
 		fmt.Printf("chain length = %d: %d object", i, stats[i])
 		if stats[i] > 1 {
@@ -77,6 +81,16 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 			}
 			fmt.Printf("%s\n", str)
 		}
+	}
+
+	if cnt == 1 {
+		end, _ := inPack.Seek(0, os.SEEK_END)
+		end -= 20
+		str := fmt.Sprintf("%s %s\t%d %d %d", go4git.HashByteToString(o.Hash), o.ActualType, o.Size, end-o.StartOffset, o.StartOffset)
+		if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
+			str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.HashByteToString(o.BaseHash))
+		}
+		fmt.Printf("%s\n", str)
 	}
 	showStats(chainLength)
 }
