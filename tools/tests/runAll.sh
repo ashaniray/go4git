@@ -12,6 +12,11 @@ testShowPack.sh bug01.pack
 testShowIndex.sh bug02.idx
 testShowPack.sh bug02.pack 
 
+# bug02.pack due to incorrect reading of ref_delta
+# when length = 0
+testShowIndex.sh bug03.idx
+testShowPack.sh bug03.pack 
+
 
 for PACK_FILE in $(find ~ -name "*.pack" 2>/dev/null)
 do

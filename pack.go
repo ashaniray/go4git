@@ -62,7 +62,7 @@ func (o PackedObject) String() string {
 	str += fmt.Sprintf(" ActualType: %s\n", o.ActualType)
 	str += fmt.Sprintf(" Hash: %s\n", HashByteToString(o.Hash))
 	str += fmt.Sprintf(" RefLevel: %d\n", o.RefLevel)
-	str += fmt.Sprintf(" BaseHash: %s\n", o.BaseHash)
+	str += fmt.Sprintf(" BaseHash: %s\n", HashByteToString(o.BaseHash))
 	str += fmt.Sprintf(" ---Data(starts below):---\n")
 	str += fmt.Sprintf("%s", o.Data)
 	return str
@@ -134,6 +134,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 		obj.RefLevel = base.RefLevel + 1
 		obj.BaseHash = base.Hash
 	}
+
 	if objectType == REF_DELTA {
 		packedIndex, err := GetObjectForHash(HashByteToString(hashOfRef), inIndex)
 		if err != nil {
@@ -241,6 +242,9 @@ func getCopyOrPasteInDelta(delta []byte) (isCopy bool, srcOffset uint, length ui
 				bytesRead++
 				length = (uint(b) << uint(8*i)) | length
 			}
+		}
+		if length == 0 {
+			length = 0x010000
 		}
 	case 0:
 		isCopy = false
