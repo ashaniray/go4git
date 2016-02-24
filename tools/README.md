@@ -93,6 +93,12 @@ $ git show-index < <idx_file_name>
 
 ### showpack
 Displays the packed object data for a given pack-file
+Flags of show pack are:
+
+- -s <int> The offset to read from the pack file (default -1). This flag can be used along with -d or -h.
+  - -d	Output data for the above object (default true).
+  - -h	Output header information for the above object
+- -v	Produce output of git pack-verify -v (default true)
 
 #### Usage
 ```
@@ -102,9 +108,13 @@ $ showindex -v <pack_file>
 $ showindex -s 12 <pack_file>
 <Contents of object at index 12 in packfile displayed>
 ...
-$ showindex -t -s 12 <pack_file>
+$ showindex -h -s 12 <pack_file>
 <Contents of object at index 12 in packfile displayed along with header information>
 ...
+
+$ showpack -s 12 -h -d=false sample.pack
+<Only header information displayed for the object at offset 12>
+
 ```
 
 Compare with
