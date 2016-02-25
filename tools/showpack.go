@@ -125,9 +125,11 @@ func main() {
 			fmt.Printf(" Hash: %s\n", go4git.HashByteToString(p.Hash))
 			fmt.Printf(" RefLevel: %d\n", p.RefLevel)
 			fmt.Printf(" BaseHash: %s\n", go4git.HashByteToString(p.BaseHash))
+			if *data {
+				fmt.Printf(" ---Data(starts below):---\n")
+			}
 		}
 		if *data {
-			fmt.Printf(" ---Data(starts below):---\n")
 			fmt.Printf("%s", p.Data)
 		}
 		return
