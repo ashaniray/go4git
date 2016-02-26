@@ -29,6 +29,10 @@ func (idx PackIndex) String() string {
 	return fmt.Sprintf("%d %s (%s)", idx.Offset, HashByteToString(idx.Hash), idx.CRC)
 }
 
+func (idx PackIndex) HashAsString() string {
+	return HashByteToString(idx.Hash)
+}
+
 func GetTotalCount(in io.ReadSeeker) (uint, error) {
 	_, err := in.Seek(0x404, os.SEEK_SET)
 	if err != nil {
