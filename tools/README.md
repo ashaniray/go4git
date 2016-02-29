@@ -59,6 +59,7 @@ Generates hash of (**blob** by default)
 ```
 $ gensha1 <filename> | echo $(hexdump -ve '1/1 "%.2x"')
 $ echo "<contents_of_commit>" | gensha1 -t commit | echo $(hexdump -ve '1/1 "%.2x"')
+$ echo "<contents_of_commit>" | gensha1 -t commit | xxd -g0 -ps
 ```
 
 Compare with
