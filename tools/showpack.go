@@ -57,27 +57,27 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 			panic(err)
 		}
 		chainLength[next.RefLevel]++
-		str := fmt.Sprintf("%s %s %d %d %d", go4git.HashByteToString(o.Hash), o.ActualType, o.Size, next.StartOffset-o.StartOffset, o.StartOffset)
+		str := fmt.Sprintf("%s %s %d %d %d", go4git.Byte2String(o.Hash), o.ActualType, o.Size, next.StartOffset-o.StartOffset, o.StartOffset)
 		if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
-			str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.HashByteToString(o.BaseHash))
+			str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.Byte2String(o.BaseHash))
 		}
 		fmt.Printf("%s\n", str)
-		if go4git.HashByteToString(o.Hash) != go4git.HashByteToString(indices[i].Hash) {
+		if go4git.Byte2String(o.Hash) != go4git.Byte2String(indices[i].Hash) {
 			panic(fmt.Sprintf("Hash do not match for index %d offset %d in %s: Expected: %s, Computed: %s",
 				i,
 				indices[i].Offset,
 				fileName,
-				go4git.HashByteToString(indices[i].Hash),
-				go4git.HashByteToString(o.Hash),
+				go4git.Byte2String(indices[i].Hash),
+				go4git.Byte2String(o.Hash),
 			))
 		}
 		o = next
 		if i == cnt-2 {
 			end, _ := inPack.Seek(0, os.SEEK_END)
 			end -= 20
-			str := fmt.Sprintf("%s %s\t%d %d %d", go4git.HashByteToString(next.Hash), next.ActualType, next.Size, end-next.StartOffset, next.StartOffset)
+			str := fmt.Sprintf("%s %s\t%d %d %d", go4git.Byte2String(next.Hash), next.ActualType, next.Size, end-next.StartOffset, next.StartOffset)
 			if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
-				str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.HashByteToString(o.BaseHash))
+				str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.Byte2String(o.BaseHash))
 			}
 			fmt.Printf("%s\n", str)
 		}
@@ -86,9 +86,9 @@ func showVerifyPack(inPack io.ReadSeeker, inIdx io.ReadSeeker) {
 	if cnt == 1 {
 		end, _ := inPack.Seek(0, os.SEEK_END)
 		end -= 20
-		str := fmt.Sprintf("%s %s\t%d %d %d", go4git.HashByteToString(o.Hash), o.ActualType, o.Size, end-o.StartOffset, o.StartOffset)
+		str := fmt.Sprintf("%s %s\t%d %d %d", go4git.Byte2String(o.Hash), o.ActualType, o.Size, end-o.StartOffset, o.StartOffset)
 		if o.Type == go4git.REF_DELTA || o.Type == go4git.OFS_DELTA {
-			str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.HashByteToString(o.BaseHash))
+			str += fmt.Sprintf(" %d %s", o.RefLevel, go4git.Byte2String(o.BaseHash))
 		}
 		fmt.Printf("%s\n", str)
 	}
@@ -117,14 +117,14 @@ func main() {
 		if *header {
 			fmt.Printf("Details of Object at offset [%d] \n", *offset)
 			fmt.Printf(" Type: %s\n", p.Type)
-			fmt.Printf(" HashOfRef: %s\n", go4git.HashByteToString(p.HashOfRef))
+			fmt.Printf(" HashOfRef: %s\n", go4git.Byte2String(p.HashOfRef))
 			fmt.Printf(" RefOffset: %d\n", p.RefOffset)
 			fmt.Printf(" Size: %d\n", p.Size)
 			fmt.Printf(" StartOffset: %d\n", p.StartOffset)
 			fmt.Printf(" ActualType: %s\n", p.ActualType)
-			fmt.Printf(" Hash: %s\n", go4git.HashByteToString(p.Hash))
+			fmt.Printf(" Hash: %s\n", go4git.Byte2String(p.Hash))
 			fmt.Printf(" RefLevel: %d\n", p.RefLevel)
-			fmt.Printf(" BaseHash: %s\n", go4git.HashByteToString(p.BaseHash))
+			fmt.Printf(" BaseHash: %s\n", go4git.Byte2String(p.BaseHash))
 			if *data {
 				fmt.Printf(" ---Data(starts below):---\n")
 			}

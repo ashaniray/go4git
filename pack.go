@@ -55,14 +55,14 @@ func (t ObjectType) String() string {
 func (o PackedObject) String() string {
 	str := fmt.Sprintf("Packed Object at offset [%d] \n", o.StartOffset)
 	str += fmt.Sprintf(" Type: %s\n", o.Type)
-	str += fmt.Sprintf(" HashOfRef: %s\n", HashByteToString(o.HashOfRef))
+	str += fmt.Sprintf(" HashOfRef: %s\n", Byte2String(o.HashOfRef))
 	str += fmt.Sprintf(" RefOffset: %d\n", o.RefOffset)
 	str += fmt.Sprintf(" Size: %d\n", o.Size)
 	str += fmt.Sprintf(" StartOffset: %d\n", o.StartOffset)
 	str += fmt.Sprintf(" ActualType: %s\n", o.ActualType)
-	str += fmt.Sprintf(" Hash: %s\n", HashByteToString(o.Hash))
+	str += fmt.Sprintf(" Hash: %s\n", Byte2String(o.Hash))
 	str += fmt.Sprintf(" RefLevel: %d\n", o.RefLevel)
-	str += fmt.Sprintf(" BaseHash: %s\n", HashByteToString(o.BaseHash))
+	str += fmt.Sprintf(" BaseHash: %s\n", Byte2String(o.BaseHash))
 	str += fmt.Sprintf(" ---Data(starts below):---\n")
 	str += fmt.Sprintf("%s", o.Data)
 	return str
@@ -136,7 +136,7 @@ func ReadPackedObjectAtOffset(offset int64, in io.ReadSeeker, inIndex io.ReadSee
 	}
 
 	if objectType == REF_DELTA {
-		packedIndex, err := GetObjectForHash(HashByteToString(hashOfRef), inIndex)
+		packedIndex, err := GetObjectForHash(Byte2String(hashOfRef), inIndex)
 		if err != nil {
 			return obj, err
 		}

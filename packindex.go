@@ -2,7 +2,6 @@ package go4git
 
 import (
 	"encoding/binary"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -15,7 +14,7 @@ import (
 
 type PackIndex struct {
 	Hash   []byte
-	CRC    string
+	CRC    []byte
 	Offset int
 }
 
@@ -26,11 +25,11 @@ func (a ByOffset) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByOffset) Less(i, j int) bool { return a[i].Offset < a[j].Offset }
 
 func (idx PackIndex) String() string {
-	return fmt.Sprintf("%d %s (%s)", idx.Offset, HashByteToString(idx.Hash), idx.CRC)
+	return fmt.Sprintf("%d %s (%s)", idx.Offset, Byte2String(idx.Hash), Byte2String(idx.CRC))
 }
 
 func (idx PackIndex) HashAsString() string {
-	return HashByteToString(idx.Hash)
+	return Byte2String(idx.Hash)
 }
 
 func GetTotalCount(in io.ReadSeeker) (uint, error) {
@@ -61,18 +60,18 @@ func readHashAt(indexAt int, in io.ReadSeeker) ([]byte, error) {
 	return hashBuff, nil
 }
 
-func readCRCAt(indexAt int, count uint, in io.ReadSeeker) (string, error) {
+func readCRCAt(indexAt int, count uint, in io.ReadSeeker) ([]byte, error) {
 	crcOffset := 0x408 + int64(count)*0x14 + int64(indexAt)*4
 	_, err := in.Seek(crcOffset, os.SEEK_SET)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	crcBuff := make([]byte, 4)
 	_, err = in.Read(crcBuff)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return hex.EncodeToString(crcBuff), nil
+	return crcBuff, nil
 }
 
 func readOffsetAt(indexAt int, count uint, in io.ReadSeeker) (int, error) {
@@ -171,7 +170,7 @@ func GetObjectForHash(hash string, in io.ReadSeeker) (PackIndex, error) {
 		if err != nil {
 			return PackIndex{}, err
 		}
-		hashOfObjAsStr := HashByteToString(hashOfObj)
+		hashOfObjAsStr := Byte2String(hashOfObj)
 		switch strings.Compare(hash, hashOfObjAsStr[:len(hash)]) {
 		case 0:
 			return ReadPackIndexAt(curr, in)

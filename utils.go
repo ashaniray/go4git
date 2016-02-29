@@ -60,7 +60,7 @@ func Zlib(in io.Reader, out io.Writer) error {
 	return err
 }
 
-func HashByteToString(b []byte) string {
+func Byte2String(b []byte) string {
 	return hex.EncodeToString(b)
 }
 
