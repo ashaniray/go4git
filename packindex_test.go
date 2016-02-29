@@ -24,7 +24,7 @@ func TestReadPackIdx(t *testing.T) {
 			t.Errorf("offset = %d; want %d", got, want)
 		}
 
-		if got, want := idx.CRC, packedIdxsWanted[i].CRC; got != want {
+		if got, want := idx.CRCAsString(), packedIdxsWanted[i].CRC; got != want {
 			t.Errorf("crc = %s; want %s", got, want)
 		}
 

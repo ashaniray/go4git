@@ -28,6 +28,10 @@ func (idx PackIndex) String() string {
 	return fmt.Sprintf("%d %s (%s)", idx.Offset, Byte2String(idx.Hash), Byte2String(idx.CRC))
 }
 
+func (idx PackIndex) CRCAsString() string {
+	return Byte2String(idx.CRC)
+}
+
 func (idx PackIndex) HashAsString() string {
 	return Byte2String(idx.Hash)
 }
