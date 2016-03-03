@@ -1,6 +1,6 @@
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits \
- showpack showindex repostat pptag ppfixtures
+ showpack showindex repostat pptag ppfixtures lsrefs
 
 unzlib: unzlib.go 
 	go build unzlib.go 
@@ -44,6 +44,9 @@ repostat: repostat.go
 pptag: pptag.go 
 	go build pptag.go 
 
+lsrefs: lsrefs.go 
+	go build lsrefs.go 
+
 ppfixtures: ppfixtures.go 
 	go build ppfixtures.go 
 
@@ -62,6 +65,7 @@ install: unzlib
 	cp lscommits  ${GOPATH}/bin
 	cp ppcommit  ${GOPATH}/bin
 	cp repostat  ${GOPATH}/bin
+	cp lsrefs  ${GOPATH}/bin
 	cp ppfixtures  ${GOPATH}/bin
 	
 clean:
