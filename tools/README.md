@@ -230,11 +230,20 @@ Usage of ppfixtures:
     	print fixture of given size. [xs|sm|md|lg|xl] (default "sm")
 ```
 
+---
 
+### lsrefs
+list all references in the local repository. This is equivalent to `$ git show-ref`
+
+#### Usage
+```
+$ lsrefs -d /path/to/repo
+```
+---
 ## TODO
 - Change ```*os.File``` to ```io.Reader``` in the function arguments in ```utils.go```
 - **tree2fs** to convert a tree into a folder structure in the file-system.
 - **fs2tree** convert a folder structure to a tree object
 - **unpack** Unpack objects from a packed archive
 - **pack** Create a packed archive of objects
-- **lsrefs** list all references in the local repository
+
