@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"encoding/hex"
+	"encoding/binary"
 )
 
 /////// Begin changes by Ashani ///////////////////
@@ -62,6 +63,15 @@ func Zlib(in io.Reader, out io.Writer) error {
 
 func Byte2String(b []byte) string {
 	return hex.EncodeToString(b)
+}
+
+func ReadUint32(in io.Reader) (uint32, error) {
+	buff := make([]byte, 4)
+	_, err := in.Read(buff)
+	if err != nil {
+		return 0, err
+	}
+	return binary.BigEndian.Uint32(buff), nil
 }
 
 

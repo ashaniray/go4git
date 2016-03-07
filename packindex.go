@@ -84,12 +84,8 @@ func readOffsetAt(indexAt int, count uint, in io.ReadSeeker) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	indexBuff := make([]byte, 4)
-	_, err = in.Read(indexBuff)
-	if err != nil {
-		return 0, err
-	}
-	return int(binary.BigEndian.Uint32(indexBuff)), nil
+	offset, err := ReadUint32(in)
+	return int(offset), err
 }
 
 func GetAllPackedIndex(in io.ReadSeeker) ([]PackIndex, error) {
