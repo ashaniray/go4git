@@ -8,8 +8,8 @@ fi
 
 INDEX_FILE=$1
 
-echo "diff <(showindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE})"
-diff <(showindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE}) > /dev/null
+echo "diff <(showpackindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE})"
+diff <(showpackindex  ${INDEX_FILE}) <(git show-index < ${INDEX_FILE}) > /dev/null
 if [ $? -eq 0 ]
 then
 	echo "Success"

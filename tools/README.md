@@ -72,18 +72,18 @@ $ echo -e 'blob 14\0Hello, World!' | shasum
 
 ```
 
-### showindex
+### showpackindex
 Displays the contents from pack-index file for a given index or an object hash.
 "-c" option displays the number of objects in the index file
 
 #### Usage
 ```
-$ showindex -c=true <index-file>
+$ showpackindex -c=true <index-file>
 479
-$ showindex <index-file>
+$ showpackindex <index-file>
 ...contents of the index file...
 
-$ showindex -h 06041ea2909aadb02891e1d <index_file>
+$ showpackindex -h 06041ea2909aadb02891e1d <index_file>
 ```
 If both -h and -c is provided, -c option will take precedence
 
@@ -103,13 +103,13 @@ Flags of show pack are:
 
 #### Usage
 ```
-$ showindex -v <pack_file>
+$ showpackindex -v <pack_file>
 590 06041ea2909aadb02891e1d96f2cee00ba7f7d59 (98db6920)
 ...
-$ showindex -s 12 <pack_file>
+$ showpackindex -s 12 <pack_file>
 <Contents of object at index 12 in packfile displayed>
 ...
-$ showindex -h -s 12 <pack_file>
+$ showpackindex -h -s 12 <pack_file>
 <Contents of object at index 12 in packfile displayed along with header information>
 ...
 
