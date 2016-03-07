@@ -1,12 +1,16 @@
 
 all: unzlib zlib gensha1 obj2file lstree lstype lslobj initr ppcommit lscommits \
- showpack showpackindex repostat pptag ppfixtures lsrefs
+ showpack showpackindex repostat pptag ppfixtures lsrefs \
+ showindex
 
 unzlib: unzlib.go 
 	go build unzlib.go 
 
 zlib: zlib.go 
 	go build zlib.go 
+
+showindex: showindex.go 
+	go build showindex.go 
 
 showpackindex: showpackindex.go 
 	go build showpackindex.go 
@@ -54,7 +58,7 @@ ppfixtures: ppfixtures.go
 install: unzlib
 	cp unzlib ${GOPATH}/bin
 	cp zlib ${GOPATH}/bin
-	cp showpackindex ${GOPATH}/bin
+	cp showindex ${GOPATH}/bin
 	cp gensha1 ${GOPATH}/bin
 	cp showpack ${GOPATH}/bin
 	cp obj2file ${GOPATH}/bin

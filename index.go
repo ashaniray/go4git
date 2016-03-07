@@ -1,6 +1,7 @@
 package go4git
 
 import (
+	"io"
 )
 
 
@@ -33,6 +34,9 @@ type Index struct {
 	entries []IndexEntry
 }
 
+func ParseIndex(in io.ReadSeeker) (Index, error) {
+	return Index{}, nil
+}
 
 func (idx IndexEntry) String() string {
 	return "TODO"
