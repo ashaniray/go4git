@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"compress/zlib"
 	"crypto/sha1"
+	"encoding/binary"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"io"
 	"os"
-	"encoding/hex"
-	"encoding/binary"
 )
 
 /////// Begin changes by Ashani ///////////////////
@@ -73,6 +73,5 @@ func ReadUint32(in io.Reader) (uint32, error) {
 	}
 	return binary.BigEndian.Uint32(buff), nil
 }
-
 
 ///////////////////End changes by Ashani////////////

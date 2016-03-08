@@ -60,9 +60,8 @@ func (r *Repository) References() ([]Reference, error) {
 	return refs, nil
 }
 
-
 type Reference struct {
-	name string
+	name     string
 	targetId string
 }
 
@@ -78,7 +77,6 @@ func (r Reference) IsRemote() bool {
 	return false
 }
 
-
 func (r Reference) HasLog() bool {
 	return false
 }
@@ -90,7 +88,6 @@ func (r Reference) String() string {
 func (r Reference) Type() string {
 	return ""
 }
-
 
 func (r Reference) Name() string {
 	return ""

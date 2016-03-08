@@ -8,15 +8,13 @@ import (
 	"os"
 )
 
-
-func showIndex (in io.ReadSeeker) {
+func showIndex(in io.ReadSeeker) {
 	index, err := go4git.ParseIndex(in)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Fprintf(os.Stdout, "%s\n", index)
+	fmt.Fprintf(os.Stdout, "%s", index)
 }
-
 
 func main() {
 	flag.Parse()
@@ -27,4 +25,3 @@ func main() {
 	showIndex(f)
 	return
 }
-

@@ -1,37 +1,39 @@
 package go4git
 
 import (
-	"io"
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 )
 
 type IndexEntry struct {
-	CtimeSecs   uint32
-	CtimeNanoSecs uint32
-	MtimeSecs uint32
-	MtimeNanoSecs uint32
-	Dev uint32
-	Ino uint32
-	ObjectType int
+	CtimeSecs      uint32
+	CtimeNanoSecs  uint32
+	MtimeSecs      uint32
+	MtimeNanoSecs  uint32
+	Dev            uint32
+	Ino            uint32
+	ObjectType     int
 	UnixPermission int
-	Uid uint32
-	Gid uint32
-	Hash []byte
-	Flags []byte
+	Uid            uint32
+	Gid            uint32
+	FileSize       int
+	Hash           []byte
+	Flags          []byte
 	AdditionalFlag []byte
-	EntryPathName string
-	Padding []byte
+	EntryPathName  string
+	Padding        []byte
 }
 
 type IndexHeader struct {
-	Signature string
-	Version uint32
+	Signature    string
+	Version      uint32
 	CountEntries int
 }
 
 type Index struct {
-	Header IndexHeader
+	Header  IndexHeader
 	Entries []IndexEntry
 }
 
@@ -42,8 +44,9 @@ func ParseIndex(in io.ReadSeeker) (Index, error) {
 	}
 
 	entries := make([]IndexEntry, header.CountEntries)
+	inIndex := bufio.NewReader(in)
 	for i := 0; i < header.CountEntries; i++ {
-		entry, err := parseIndexEntry(in)
+		entry, err := parseIndexEntry(inIndex)
 		if err != nil {
 			return Index{}, err
 		}
@@ -52,8 +55,110 @@ func ParseIndex(in io.ReadSeeker) (Index, error) {
 	return Index{Header: header, Entries: entries}, nil
 }
 
-func parseIndexEntry(in io.Reader) (IndexEntry, error) {
-	return IndexEntry {
+func parseIndexEntry(in *bufio.Reader) (IndexEntry, error) {
+
+	bytesRead := 0
+	ctimeSecs, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	ctimeNanoSecs, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	mtimeSecs, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	mtimeNanoSecs, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	dev, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	ino, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	mode, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	objectType := (mode & 0xf000) >> 12
+	unixPermission := mode & 0x01ff
+	uid, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	gid, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	fileSize, err := ReadUint32(in)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 4
+	sha1 := make([]byte, 20)
+	_, err = in.Read(sha1)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 20
+	flags := make([]byte, 2)
+	_, err = in.Read(flags)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += 2
+	// TODO: Version 3 has another flag
+
+	entryPathName, err := in.ReadString(0)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	entryPathName = entryPathName[0 : len(entryPathName)-1]
+	bytesRead += len(entryPathName) + 1
+	padSize := 8 - (bytesRead % 8)
+	if padSize == 8 {
+		padSize = 0
+	}
+
+	padding := make([]byte, padSize)
+	_, err = in.Read(padding)
+	if err != nil {
+		return IndexEntry{}, err
+	}
+	bytesRead += len(entryPathName) + 1
+
+	return IndexEntry{
+		CtimeSecs:      ctimeSecs,
+		CtimeNanoSecs:  ctimeNanoSecs,
+		MtimeSecs:      mtimeSecs,
+		MtimeNanoSecs:  mtimeNanoSecs,
+		Dev:            dev,
+		Ino:            ino,
+		ObjectType:     int(objectType),
+		UnixPermission: int(unixPermission),
+		Uid:            uid,
+		Gid:            gid,
+		FileSize:       int(fileSize),
+		Hash:           sha1,
+		Flags:          flags,
+		AdditionalFlag: nil,
+		EntryPathName:  entryPathName,
+		Padding:        padding,
 	}, nil
 }
 
@@ -69,21 +174,21 @@ func parseIndexHeader(in io.Reader) (IndexHeader, error) {
 	if err != nil {
 		return IndexHeader{}, err
 	}
-	
+
 	count, err := ReadUint32(in)
 	if err != nil {
 		return IndexHeader{}, err
 	}
 
 	return IndexHeader{
-		Signature:signature, 
-		Version:version, 
-		CountEntries:int(count),
-		}, nil
+		Signature:    signature,
+		Version:      version,
+		CountEntries: int(count),
+	}, nil
 }
 
 func (hdr IndexHeader) String() string {
-	str := fmt.Sprintf("Signature:%s Version:%d Entries:%d", 
+	str := fmt.Sprintf("Signature:%s Version:%d Entries:%d",
 		hdr.Signature,
 		hdr.Version,
 		hdr.CountEntries)
@@ -91,38 +196,21 @@ func (hdr IndexHeader) String() string {
 }
 
 func (e IndexEntry) String() string {
-	f := "CtimeSecs:%d\nCtimeNanoSecs:%d\nMtimeSecs:%d\nMtimeNanoSecs:%d\n" 
-	f += "Dev:%d\nIno:%d\nObjectType:%d\nUnixPermission:%d\nUid:%d\n"
-	f += "Gid:%d\nHash:%s\nFlags:%s\nAdditionalFlag:%s\nEntryPathName:%s\n"
-	f += "Padding:%s\n"
-
+	f := "%o%04o %s %d %s"
 	str := fmt.Sprintf(f,
-		e.CtimeSecs,
-		e.CtimeNanoSecs,
-		e.MtimeSecs,
-		e.MtimeNanoSecs,
-		e.Dev,
-		e.Ino,
 		e.ObjectType,
 		e.UnixPermission,
-		e.Uid,
-		e.Gid,
 		Byte2String(e.Hash),
-		Byte2String(e.Flags),
-		Byte2String(e.AdditionalFlag),
+		0,
 		e.EntryPathName,
-		Byte2String(e.Padding),
-		)
-
+	)
 	return str
 }
 
 func (idx Index) String() string {
 	var buffer bytes.Buffer
-	buffer.WriteString(fmt.Sprintf("%s", idx.Header))
-	for i, idx := range idx.Entries {
-		buffer.WriteString(fmt.Sprintf("\nEntry [%d]:\n%s", i, idx))
+	for _, idx := range idx.Entries {
+		buffer.WriteString(fmt.Sprintf("%s\n", idx))
 	}
 	return buffer.String()
 }
-
